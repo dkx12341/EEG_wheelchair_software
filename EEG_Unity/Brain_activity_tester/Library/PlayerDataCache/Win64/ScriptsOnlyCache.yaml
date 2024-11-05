@@ -87,67 +87,16 @@ ScriptsOnlyBuild:
     methodName: OnNextClick
   - assembly: Assembly-CSharp
     fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
     methodName: OnStopClick
   - assembly: Assembly-CSharp
     fullTypeName: FlasherControl
     methodName: OnInputUpdate
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnInputUpdate
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
   - assembly: Assembly-CSharp
     fullTypeName: SceneController
     methodName: OnPreviousClick
   - assembly: Assembly-CSharp
     fullTypeName: FlasherControl
-    methodName: OnInputUpdate
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
     methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnInputUpdate
   - assembly: Assembly-CSharp
     fullTypeName: SceneController
     methodName: OnNextClick
@@ -155,162 +104,15 @@ ScriptsOnlyBuild:
     fullTypeName: ColorControler
     methodName: OnValueChange
   - assembly: Assembly-CSharp
-    fullTypeName: ColorControler
-    methodName: OnValueChange
-  - assembly: Assembly-CSharp
-    fullTypeName: ColorControler
-    methodName: OnValueChange
-  - assembly: Assembly-CSharp
     fullTypeName: SceneController
     methodName: OnPreviousClick
-  - assembly: Assembly-CSharp
-    fullTypeName: ColorControler
-    methodName: OnValueChange
-  - assembly: Assembly-CSharp
-    fullTypeName: ColorControler
-    methodName: OnValueChange
-  - assembly: Assembly-CSharp
-    fullTypeName: SceneController
-    methodName: OnNextClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: ColorControler
-    methodName: OnValueChange
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnInputUpdate
-  - assembly: Assembly-CSharp
-    fullTypeName: ColorControler
-    methodName: OnValueChange
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: ColorControler
-    methodName: OnValueChange
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnInputUpdate
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStopClick
-  - assembly: Assembly-CSharp
-    fullTypeName: SceneController
-    methodName: OnPreviousClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnInputUpdate
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnStartClick
-  - assembly: Assembly-CSharp
-    fullTypeName: FlasherControl
-    methodName: OnInputUpdate
   - assembly: Assembly-CSharp
     fullTypeName: SceneController
     methodName: OnFinishClick
+  - assembly: Assembly-CSharp
+    fullTypeName: SceneController
+    methodName: OnPreviousClick
   sceneClasses:
-    Assets/Resources/Scenes/BlackFlashers.unity:
-    - Class: 1
-      Script: {instanceID: 0}
-    - Class: 4
-      Script: {instanceID: 0}
-    - Class: 20
-      Script: {instanceID: 0}
-    - Class: 21
-      Script: {instanceID: 0}
-    - Class: 28
-      Script: {instanceID: 0}
-    - Class: 48
-      Script: {instanceID: 0}
-    - Class: 81
-      Script: {instanceID: 0}
-    - Class: 89
-      Script: {instanceID: 0}
-    - Class: 104
-      Script: {instanceID: 0}
-    - Class: 108
-      Script: {instanceID: 0}
-    - Class: 114
-      Script: {instanceID: 1600}
-    - Class: 114
-      Script: {instanceID: 1722}
-    - Class: 114
-      Script: {instanceID: 2596}
-    - Class: 114
-      Script: {instanceID: 2626}
-    - Class: 114
-      Script: {instanceID: 2800}
-    - Class: 114
-      Script: {instanceID: 3088}
-    - Class: 114
-      Script: {instanceID: 4042}
-    - Class: 114
-      Script: {instanceID: 4992}
-    - Class: 114
-      Script: {instanceID: 5536}
-    - Class: 114
-      Script: {instanceID: 5686}
-    - Class: 114
-      Script: {instanceID: 6000}
-    - Class: 114
-      Script: {instanceID: 7776}
-    - Class: 114
-      Script: {instanceID: 24376}
-    - Class: 115
-      Script: {instanceID: 0}
-    - Class: 128
-      Script: {instanceID: 0}
-    - Class: 157
-      Script: {instanceID: 0}
-    - Class: 196
-      Script: {instanceID: 0}
-    - Class: 213
-      Script: {instanceID: 0}
-    - Class: 222
-      Script: {instanceID: 0}
-    - Class: 223
-      Script: {instanceID: 0}
-    - Class: 224
-      Script: {instanceID: 0}
     Assets/Resources/Scenes/ColourPads.unity:
     - Class: 1
       Script: {instanceID: 0}
@@ -345,23 +147,23 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3830}
     - Class: 114
-      Script: {instanceID: 4874}
+      Script: {instanceID: 4792}
     - Class: 114
-      Script: {instanceID: 4992}
+      Script: {instanceID: 4880}
     - Class: 114
-      Script: {instanceID: 5536}
+      Script: {instanceID: 4998}
     - Class: 114
-      Script: {instanceID: 5686}
+      Script: {instanceID: 5542}
     - Class: 114
-      Script: {instanceID: 6000}
+      Script: {instanceID: 5692}
+    - Class: 114
+      Script: {instanceID: 5898}
     - Class: 114
       Script: {instanceID: 6008}
     - Class: 114
-      Script: {instanceID: 7034}
+      Script: {instanceID: 6016}
     - Class: 114
-      Script: {instanceID: 24376}
-    - Class: 114
-      Script: {instanceID: 25792}
+      Script: {instanceID: 7042}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -408,15 +210,15 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3088}
     - Class: 114
-      Script: {instanceID: 4992}
+      Script: {instanceID: 4998}
     - Class: 114
-      Script: {instanceID: 5536}
+      Script: {instanceID: 5542}
     - Class: 114
-      Script: {instanceID: 5686}
+      Script: {instanceID: 5692}
     - Class: 114
-      Script: {instanceID: 6000}
+      Script: {instanceID: 5898}
     - Class: 114
-      Script: {instanceID: 24376}
+      Script: {instanceID: 6008}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -433,7 +235,7 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 224
       Script: {instanceID: 0}
-    Assets/Resources/Scenes/FlashingColourPdas.unity:
+    Assets/Resources/Scenes/SingleFlasher.unity:
     - Class: 1
       Script: {instanceID: 0}
     - Class: 4
@@ -461,37 +263,25 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 2596}
     - Class: 114
-      Script: {instanceID: 2602}
-    - Class: 114
       Script: {instanceID: 2626}
     - Class: 114
       Script: {instanceID: 2800}
     - Class: 114
       Script: {instanceID: 3088}
     - Class: 114
-      Script: {instanceID: 3830}
-    - Class: 114
       Script: {instanceID: 4042}
     - Class: 114
-      Script: {instanceID: 4874}
+      Script: {instanceID: 4822}
     - Class: 114
-      Script: {instanceID: 4992}
+      Script: {instanceID: 4998}
     - Class: 114
-      Script: {instanceID: 5536}
+      Script: {instanceID: 5542}
     - Class: 114
-      Script: {instanceID: 5686}
+      Script: {instanceID: 5692}
     - Class: 114
-      Script: {instanceID: 6000}
+      Script: {instanceID: 5898}
     - Class: 114
       Script: {instanceID: 6008}
-    - Class: 114
-      Script: {instanceID: 7034}
-    - Class: 114
-      Script: {instanceID: 7776}
-    - Class: 114
-      Script: {instanceID: 24376}
-    - Class: 114
-      Script: {instanceID: 25792}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -546,15 +336,15 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4306}
     - Class: 114
-      Script: {instanceID: 4992}
+      Script: {instanceID: 4998}
     - Class: 114
-      Script: {instanceID: 5536}
+      Script: {instanceID: 5542}
     - Class: 114
-      Script: {instanceID: 5686}
+      Script: {instanceID: 5692}
     - Class: 114
-      Script: {instanceID: 6000}
+      Script: {instanceID: 5898}
     - Class: 114
-      Script: {instanceID: 24376}
+      Script: {instanceID: 6008}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1036,6 +826,18 @@ ScriptsOnlyBuild:
     className: AnimationPlayableAsset
   - hash:
       serializedVersion: 2
+      Hash: bb084fc927ffe34ae2fbdb6d34bb38ce
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: ColorControler
+  - hash:
+      serializedVersion: 2
+      Hash: 47ee34eb8b6021efa0289dbbb17a5a85
+    assemblyName: Unity.TextMeshPro
+    namespaceName: TMPro
+    className: TMP_InputField
+  - hash:
+      serializedVersion: 2
       Hash: ec6cf673540b2d4e42c612611eeafe4d
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -1148,6 +950,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnMouseUpAsButtonMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 91fdb0a200e45a9d12372594ece0fd1a
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: SceneController
   - hash:
       serializedVersion: 2
       Hash: 4f353524ce6564e40764f1ea080b2d85
@@ -1394,29 +1202,10 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: 47ee34eb8b6021efa0289dbbb17a5a85
-    assemblyName: Unity.TextMeshPro
-    namespaceName: TMPro
-    className: TMP_InputField
-  - hash:
-      serializedVersion: 2
-      Hash: 91fdb0a200e45a9d12372594ece0fd1a
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: SceneController
-  - hash:
-      serializedVersion: 2
-      Hash: bb084fc927ffe34ae2fbdb6d34bb38ce
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: ColorControler
   platform: 19
   scenePathNames:
   - Assets/Resources/Scenes/Start.unity
-  - Assets/Resources/Scenes/BlackFlashers.unity
+  - Assets/Resources/Scenes/SingleFlasher.unity
   - Assets/Resources/Scenes/ColourPads.unity
-  - Assets/Resources/Scenes/FlashingColourPdas.unity
   - Assets/Resources/Scenes/Finish.unity
-  playerPath: C:/Personal_projects/EEG/Brain_activity_tester_build/Brain_activity_tester.exe
+  playerPath: C:/Repos/EEG_applications/EEG_Unity/Brain_activity_tester_build/Brain_activity_tester.exe

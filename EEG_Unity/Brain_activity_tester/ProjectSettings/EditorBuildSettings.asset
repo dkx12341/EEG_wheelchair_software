@@ -9,14 +9,11 @@ EditorBuildSettings:
     path: Assets/Resources/Scenes/Start.unity
     guid: 6126f7a01ce24d149b199f77f002876a
   - enabled: 1
-    path: Assets/Resources/Scenes/BlackFlashers.unity
-    guid: 6960a80b35036754eb146e3a0ddd440c
+    path: Assets/Resources/Scenes/SingleFlasher.unity
+    guid: 1b5cf0d5eb35e1f42a9fcb524db8a692
   - enabled: 1
     path: Assets/Resources/Scenes/ColourPads.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
-    path: Assets/Resources/Scenes/FlashingColourPdas.unity
-    guid: e9107625b65395845a3a0bf13657c850
   - enabled: 1
     path: Assets/Resources/Scenes/Finish.unity
     guid: 7622527fcecf13941a948d90290c5a35

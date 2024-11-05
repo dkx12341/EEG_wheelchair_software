@@ -1,1 +1,1 @@
-C:\Personal_projects\EEG\Brain_activity_tester
+C:\Repos\EEG_applications\EEG_Unity\Brain_activity_tester
