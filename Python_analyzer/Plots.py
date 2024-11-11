@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
-import ipywidgets as widgets
+
 
 class Plotter():
     def plot_linear_all(df):
@@ -17,6 +17,17 @@ class Plotter():
             axes[i].set_ylabel(col)
         plt.tight_layout()
         plt.show()
+
+    def plot_linear_column(df,column_name):
+        if column_name in df.columns:
+            sns.lineplot(data=df[column_name])
+            plt.title('Line Plot of'+ column_name)
+            plt.xlabel('Time')
+            plt.ylabel('Voltage')
+            plt.show()
+        else:
+            print(f"Column '{column_name}' not found in DataFrame.")
+
 
   
     def plot_fourier_all(df):
@@ -36,7 +47,7 @@ class Plotter():
         plt.show()
 
 
-    def plot_fourier_colmn(df,column_name, Fs):
+    def plot_fourier_column(df,column_name, Fs):
         """
         Plots the Fourier Transform magnitude of a specified column with frequency on the x-axis in Hz.
 
@@ -62,7 +73,7 @@ class Plotter():
             
             # Plot the magnitude of the Fourier Transform
             plt.figure(figsize=(8, 4))
-            plt.plot(freqs[:], magnitude[:])
+            plt.plot(freqs[50:], magnitude[50:])
             plt.title(f'Fourier Transform Magnitude of {column_name}')
             plt.xlabel('Frequency (Hz)')
             plt.ylabel('Magnitude (µV)')
