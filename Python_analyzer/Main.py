@@ -7,14 +7,14 @@ from Plots import Plotter
 
 
 def main():
-    print("Hello World!\n")
+    
     data = pd.DataFrame
     data = get_data_frame("C:\Repos\EEG_applications\Python_analyzer\Kontrolny_Mruganie_3_raw.csv")
 
     #Plotter.plot_linear_column(data, "C3")
 
     ft_data = fourier_transform(data)
-    print(ft_data["C3"])
+    #print(ft_data["C3"])
     Plotter.plot_fourier_column(ft_data,"C3",300)
 
     print("yay")

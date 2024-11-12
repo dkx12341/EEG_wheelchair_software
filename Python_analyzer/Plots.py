@@ -47,13 +47,13 @@ class Plotter():
         plt.show()
 
 
-    def plot_fourier_column(df,column_name, Fs):
+    def plot_fourier_column(df,column_name, Fs): 
         """
         Plots the Fourier Transform magnitude of a specified column with frequency on the x-axis in Hz.
 
         Parameters:
         - column_name (str): Name of the column to plot.
-        - Fs (float): Sampling rate in Hz.
+        - Fs (float): Sampling rate in Hz, in DSI 24 it is 300.
         """
         # Check if the column exists in the DataFrame
         if column_name in df.columns:
@@ -64,7 +64,7 @@ class Plotter():
             magnitude = np.abs(df[column_name]) / N  # Scaling to retain µV
             
             # Generate frequency bins in Hz
-            freqs = np.fft.fftfreq(N, d=1/Fs)
+            freqs = np.fft.fftfreq(N)#, d=1/Fs)
             
             # Only take the positive half of the spectrum
             half_N = N // 2
