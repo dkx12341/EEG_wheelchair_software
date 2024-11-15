@@ -2,6 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.signal import stft
 
 
 class Plotter():
@@ -17,6 +18,7 @@ class Plotter():
             axes[i].set_ylabel(col)
         plt.tight_layout()
         plt.show()
+
 
     def plot_linear_column(df,column_name):
         if column_name in df.columns:
@@ -64,7 +66,7 @@ class Plotter():
             magnitude = np.abs(df[column_name]) / N  # Scaling to retain µV
             
             # Generate frequency bins in Hz
-            freqs = np.fft.fftfreq(N)#, d=1/Fs)
+            freqs = np.fft.fftfreq(N, d=1/Fs)
             
             # Only take the positive half of the spectrum
             half_N = N // 2
@@ -73,7 +75,8 @@ class Plotter():
             
             # Plot the magnitude of the Fourier Transform
             plt.figure(figsize=(8, 4))
-            plt.plot(freqs[50:], magnitude[50:])
+            #filtering below 0.5Hz
+            plt.plot(magnitude[10:])
             plt.title(f'Fourier Transform Magnitude of {column_name}')
             plt.xlabel('Frequency (Hz)')
             plt.ylabel('Magnitude (µV)')
@@ -82,5 +85,16 @@ class Plotter():
             print(f"Column '{column_name}' not found in DataFrame.")
 
         
-    
+    def plot_short_time_fourier_all(df, Fs): 
+        
+        nperseg = 100  # Length of each segment
+        frequencies, times, Zxx = stft(df['signal'].values, fs=Fs, nperseg=nperseg)
 
+        
+        plt.figure(figsize=(10, 6))
+        plt.pcolormesh(times, frequencies, np.abs(Zxx), shading='gouraud')
+        plt.title('STFT Magnitude')
+        plt.ylabel('Frequency [Hz]')
+        plt.xlabel('Time [sec]')
+        plt.colorbar(label='Magnitude')
+        plt.show()
