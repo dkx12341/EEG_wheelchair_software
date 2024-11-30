@@ -30,25 +30,8 @@ class Plotter():
             print(f"Column '{column_name}' not found in DataFrame.")
 
 
-  
-    def plot_fourier_all(df):
-        num_columns = len(df.columns)
-        fig, axes = plt.subplots(num_columns, 1, figsize=(8, num_columns * 4))
 
-        for i, col in enumerate(df.columns):
-            # Compute the magnitude of the FFT (absolute value)
-            magnitude = np.abs(df[col])
-        
-        # Plot the magnitude of the Fourier Transform
-            axes[i].plot(magnitude)
-            axes[i].set_title(f'Fourier Transform Magnitude of {col}')
-            axes[i].set_xlabel('Frequency')
-            axes[i].set_ylabel('Magnitude')
-        plt.tight_layout()
-        plt.show()
-
-
-    def plot_fourier_column(df,column_name, Fs): 
+    def plot_fourier_column(df,column_name): 
         """
         Plots the Fourier Transform magnitude of a specified column with frequency on the x-axis in Hz.
 
@@ -64,17 +47,19 @@ class Plotter():
             # Calculate the magnitude of the Fourier Transform and scale by the number of samples
             magnitude = np.abs(df[column_name]) / N  # Scaling to retain µV
             
-            # Generate frequency bins in Hz
-            freqs = np.fft.fftfreq(N, d=1/Fs)
             
             # Only take the positive half of the spectrum
             half_N = N // 2
-            freqs = freqs[:half_N]
+            freqs = df['Frequency'][:half_N]
             magnitude = magnitude[:half_N]
             
             # Plot the magnitude of the Fourier Transform
             plt.figure(figsize=(8, 4))
+<<<<<<< HEAD
             plt.plot(freqs[50:], magnitude[50:])
+=======
+            plt.plot(freqs,magnitude)
+>>>>>>> 53742c8b8f006dd650a7b7de82f43ba628d25017
             plt.title(f'Fourier Transform Magnitude of {column_name}')
             plt.xlabel('Frequency (Hz)')
             plt.ylabel('Magnitude (µV)')
@@ -83,5 +68,9 @@ class Plotter():
             print(f"Column '{column_name}' not found in DataFrame.")
 
         
+<<<<<<< HEAD
     
 
+=======
+    
+>>>>>>> 53742c8b8f006dd650a7b7de82f43ba628d25017
