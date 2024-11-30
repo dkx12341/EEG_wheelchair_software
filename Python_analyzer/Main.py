@@ -34,8 +34,8 @@ def read_from_csv(file_path):
 
 def create_time_index(df):
     df.index = df.index + 1  # This will shift the index by 1, so index starts from 1
-    df.iloc[:, 0] = df.index / 300
-    df = df.set_index(df.columns[0])
+    df["Time"] = df.index/300
+    print(df["Time"])
     return df
 
 

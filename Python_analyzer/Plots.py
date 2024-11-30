@@ -2,23 +2,22 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.signal import stft
 
 
 class Plotter():
+
     def plot_linear_all(df):
 
         df=df.astype(float)
         num_columns = len(df.columns)
         fig, axes = plt.subplots(num_columns, 1, figsize=(6, num_columns * 4))
         for i, col in enumerate(df.columns):
-            sns.lineplot(data=df[col], ax=axes[i])
+            sns.lineplot(x="Time",data=df[col], ax=axes[i])
             axes[i].set_title(f'Line Plot of {col}')
             axes[i].set_xlabel('Time')
             axes[i].set_ylabel(col)
         plt.tight_layout()
         plt.show()
-
 
     def plot_linear_column(df,column_name):
         if column_name in df.columns:
@@ -75,8 +74,7 @@ class Plotter():
             
             # Plot the magnitude of the Fourier Transform
             plt.figure(figsize=(8, 4))
-            #filtering below 0.5Hz
-            plt.plot(magnitude[10:])
+            plt.plot(freqs[50:], magnitude[50:])
             plt.title(f'Fourier Transform Magnitude of {column_name}')
             plt.xlabel('Frequency (Hz)')
             plt.ylabel('Magnitude (µV)')
@@ -85,16 +83,5 @@ class Plotter():
             print(f"Column '{column_name}' not found in DataFrame.")
 
         
-    def plot_short_time_fourier_all(df, Fs): 
-        
-        nperseg = 100  # Length of each segment
-        frequencies, times, Zxx = stft(df['signal'].values, fs=Fs, nperseg=nperseg)
+    
 
-        
-        plt.figure(figsize=(10, 6))
-        plt.pcolormesh(times, frequencies, np.abs(Zxx), shading='gouraud')
-        plt.title('STFT Magnitude')
-        plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [sec]')
-        plt.colorbar(label='Magnitude')
-        plt.show()
