@@ -55,11 +55,7 @@ class Plotter():
             
             # Plot the magnitude of the Fourier Transform
             plt.figure(figsize=(8, 4))
-<<<<<<< HEAD
-            plt.plot(freqs[50:], magnitude[50:])
-=======
             plt.plot(freqs,magnitude)
->>>>>>> 53742c8b8f006dd650a7b7de82f43ba628d25017
             plt.title(f'Fourier Transform Magnitude of {column_name}')
             plt.xlabel('Frequency (Hz)')
             plt.ylabel('Magnitude (µV)')
@@ -68,9 +64,4 @@ class Plotter():
             print(f"Column '{column_name}' not found in DataFrame.")
 
         
-<<<<<<< HEAD
     
-
-=======
-    
->>>>>>> 53742c8b8f006dd650a7b7de82f43ba628d25017
