@@ -46,11 +46,11 @@ class EEG_manager:
                     break
                 
                 
-                print(f"Received from server: {data}")
+                #print(f"Received from server: {data}")
 
                 self.EEG_command_buffor.append(data)
                 
-                print(f"Received from server: {data}")
+                #print(f"Received from server: {data}")
                 if len(self.EEG_command_buffor) >= self.buffor_length:
                     self.adjust_output()
                     print ("straight output: " + str(self.straight_output) +"\n turn output: " + str(self.turn_output))
