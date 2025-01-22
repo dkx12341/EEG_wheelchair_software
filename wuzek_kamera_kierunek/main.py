@@ -223,7 +223,7 @@ while True:
         start_new_thread(sterowanie_głową)
 
     elif "sterowanie eeg" in tranckrypcja:
-        start_new_thread()
+        start_new_thread(sterowanie_eeg)
 
     elif "wyłącz się" in tranckrypcja:
         print("wyłączam się")
