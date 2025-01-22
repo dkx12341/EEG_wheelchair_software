@@ -14,6 +14,7 @@ from compare_face import FaceRecognition
 #from hand import HandSteeringAnalyzer
 from speak import AudioPlayer
 from wuzek import ChairConnect
+from EEG_manager import EEG_manager
 
 AUDIO_PATH = "/home/wojciech/projects/python/wuzek_kamera_kierunek/voice"
 FACE_PATH= "/home/wojciech/projects/python/wuzek_kamera_kierunek/face"
@@ -151,6 +152,26 @@ def sterowanie_głową():
 
 
 
+def sterowanie_eeg():
+    
+    print("Sterowanie eeg aktywne.")
+
+    EEG_obj = EEG_manager()
+
+    while not stop_thread_event.is_set():
+        
+        wuzek.set_speed(EEG_obj.get_stright_output())
+        wuzek.set_steer(EEG_obj.get_turn_output())
+        
+        print(f"Predkosc: " + str(EEG_obj.get_stright_output()) + "\n Skret: " + str(EEG_obj.get_turn_output))  # Debugging wartości 
+
+        # Opóźnienie dla płynniejszego działania
+        time.sleep(0.05)
+
+    print("Sterowanie eeg zakończone.")
+
+
+
 
 name = find_know_face()
 
@@ -200,6 +221,9 @@ while True:
 
     elif "sterowanie głową" in tranckrypcja:
         start_new_thread(sterowanie_głową)
+
+    elif "sterowanie eeg" in tranckrypcja:
+        start_new_thread()
 
     elif "wyłącz się" in tranckrypcja:
         print("wyłączam się")
