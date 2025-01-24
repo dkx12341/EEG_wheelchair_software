@@ -16,8 +16,8 @@ from speak import AudioPlayer
 from wuzek import ChairConnect
 from EEG_manager import EEG_manager
 
-AUDIO_PATH = "/home/wojciech/projects/python/wuzek_kamera_kierunek/voice"
-FACE_PATH= "/home/wojciech/projects/python/wuzek_kamera_kierunek/face"
+AUDIO_PATH = "C:\Repos\EEG_applications\wuzek_kamera_kierunek/voice"
+FACE_PATH= "C:\Repos\EEG_applications\wuzek_kamera_kierunek/face"
 
 VIDEO_FACE_COMPARE = False
 
@@ -209,6 +209,7 @@ while True:
 
     if "sterowanie aplikacją" in tranckrypcja:
         print("włączam sterowanie aplikacją")
+        
     elif "kalibracja głowa" in tranckrypcja:
         recognizer_audio.stop()
         kalibracja(audio_player, face_analyzer)

@@ -326,7 +326,9 @@ def main():
     # Windows: Menadżer urządzeń => porty (COM i LPT) dla USB np. "COM6" dla BT "COM5"
     # Linux: ls /dev/tty* dla USB np. "/dev/ttyUSB0"
 
-    port = "/dev/ttyUSB0"
+    #port = "/dev/ttyUSB0" #change for windows
+    port = "COM3"
+
     baud_rate = 115200
 
     # Tworzymy obiekt klasy ChairConnect
