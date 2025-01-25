@@ -193,6 +193,18 @@ baud_rate = 115200
 wuzek = ChairConnect(port, baud_rate)
 wuzek.start()
 
+temp_bool = True
+
+while True:
+    time.sleep(0.1)
+
+    if temp_bool:
+        temp_bool = False
+        start_new_thread(sterowanie_eeg)
+
+    print("Working")
+
+"""
 while True:
     time.sleep(0.1)
     tranckrypcja = ""
@@ -240,3 +252,4 @@ while True:
     else:
         if tranckrypcja != "":
             beep(400, 0.1)
+"""
