@@ -8,9 +8,9 @@ import sys
 import keyboard
 import pygame
 
-from face import FaceAnalyzer  # Import klasy FaceAnalyzer
-from recognition_speak import RealTimeRecognizer  # Import klasy RealTimeRecognizer
-from compare_face import FaceRecognition
+#from face import FaceAnalyzer  # Import klasy FaceAnalyzer
+#from recognition_speak import RealTimeRecognizer  # Import klasy RealTimeRecognizer
+#from compare_face import FaceRecognition
 #from hand import HandSteeringAnalyzer
 from speak import AudioPlayer
 from wuzek import ChairConnect
@@ -56,7 +56,7 @@ def beep(frequency, duration, samplerate=22050):
     sd.play(wave, samplerate=samplerate, blocksize=1024, latency='high')
     sd.wait()
 
-
+"""
 def find_know_face():
     camera = cv2.VideoCapture(0)  # Pierwsza dostępna kamera
     face_recognition_system = FaceRecognition(FACE_PATH, VIDEO_FACE_COMPARE, camera)
@@ -71,7 +71,7 @@ def find_know_face():
         time.sleep(0.1)
 
     return name
-
+"""
 def tell_hello(player, name):
     #print(name)
     player.play_audio("przywitanie", name)
@@ -114,12 +114,12 @@ def ustaw_na():
     while not stop_thread_event.is_set():
         wuzek.set_speed(100)
         time.sleep(1)
-
+"""
 def sterowanie_głową():
-    """
+    
     Funkcja obsługująca sterowanie głową.
     Pobiera wartości spojrzenia z `face_analyzer` i steruje wózkiem.
-    """
+   
     if not face_analyzer.is_calibrated():
         print("Kamera nie jest skalibrowana. Upewnij się, że wykonano kalibrację.")
         return
@@ -149,7 +149,7 @@ def sterowanie_głową():
         time.sleep(0.05)
 
     print("Sterowanie głową zakończone.")
-
+"""
 
 
 def sterowanie_eeg():
@@ -163,7 +163,7 @@ def sterowanie_eeg():
         wuzek.set_speed(EEG_obj.get_stright_output())
         wuzek.set_steer(EEG_obj.get_turn_output())
         
-        print(f"Predkosc: " + str(EEG_obj.get_stright_output()) + "\n Skret: " + str(EEG_obj.get_turn_output))  # Debugging wartości 
+        print(f"Predkosc: " + str(EEG_obj.get_stright_output()) + "\n Skret: " + str(EEG_obj.get_turn_output()))  # Debugging wartości 
 
         # Opóźnienie dla płynniejszego działania
         time.sleep(0.05)
@@ -173,21 +173,21 @@ def sterowanie_eeg():
 
 
 
-name = find_know_face()
+#name = find_know_face()
 
-print(name)
+#print(name)
 
-camera = cv2.VideoCapture(0)  # Pierwsza dostępna kamera
-face_analyzer = FaceAnalyzer(True, [camera])  # Inicjalizacja FaceAnalyzer z kamerą
-face_analyzer.start()
+#camera = cv2.VideoCapture(0)  # Pierwsza dostępna kamera
+#face_analyzer = FaceAnalyzer(True, [camera])  # Inicjalizacja FaceAnalyzer z kamerą
+#face_analyzer.start()
 
-tell_hello(audio_player, name)
-tell_help_you(audio_player)
+#tell_hello(audio_player, name)
+#tell_help_you(audio_player)
 
-recognizer_audio = RealTimeRecognizer()
-recognizer_audio.start()
+#recognizer_audio = RealTimeRecognizer()
+#recognizer_audio.start()
 
-port = "/dev/ttyUSB0"
+port = "COM8"
 baud_rate = 115200
 
 wuzek = ChairConnect(port, baud_rate)
@@ -195,14 +195,45 @@ wuzek.start()
 
 temp_bool = True
 
+
 while True:
     time.sleep(0.1)
-
-    if temp_bool:
-        temp_bool = False
+    user_input = ""
+    
+    if keyboard.is_pressed("enter"):  # Waits for Enter key press
+        print("Waiting for input...")
+        user_input = input().strip().lower()
+        
+    if user_input:
+        print(user_input)
+    
+    if "sterowanie aplikacją" in user_input:
+        print("włączam sterowanie aplikacją")
+        
+    elif "test wózka" in user_input:
+        start_new_thread(test_wuzka)
+    
+    elif "ustaw na 100" in user_input:
+        start_new_thread(ustaw_na)
+    
+    
+    elif "mózg" in user_input:
         start_new_thread(sterowanie_eeg)
-
-    print("Working")
+    
+    elif "wyłącz się" in user_input:
+        print("wyłączam się")
+        tell_end(audio_player)
+        #recognizer_audio.stop()
+        #face_analyzer.stop()
+        wuzek.stop()
+        if active_thread and active_thread.is_alive():
+            stop_thread_event.set()
+            active_thread.join()
+        sys.exit()
+        break
+    else:
+        if user_input != "":
+            beep(400, 0.1)
 
 """
 while True:
@@ -217,7 +248,8 @@ while True:
         pass
 
     tranckrypcja = tranckrypcja.strip().lower()
-
+    if tranckrypcja !='':
+        print(tranckrypcja)
 
     if "sterowanie aplikacją" in tranckrypcja:
         print("włączam sterowanie aplikacją")
@@ -226,7 +258,7 @@ while True:
         recognizer_audio.stop()
         kalibracja(audio_player, face_analyzer)
         recognizer_audio.start()
-        print("włączam sterowanie eeg")
+        #print("włączam sterowanie eeg")
     elif "test wózka" in tranckrypcja:
         start_new_thread(test_wuzka)
     elif "ustaw na 100" in tranckrypcja:
@@ -235,7 +267,7 @@ while True:
     elif "sterowanie głową" in tranckrypcja:
         start_new_thread(sterowanie_głową)
 
-    elif "sterowanie eeg" in tranckrypcja:
+    elif "mózg" in tranckrypcja:
         start_new_thread(sterowanie_eeg)
 
     elif "wyłącz się" in tranckrypcja:
