@@ -1,7 +1,7 @@
 import string
 from collections import Counter
 import socket
-import threading
+
 
 
 class EEG_manager:
@@ -23,14 +23,11 @@ class EEG_manager:
     server_port = 2000       # Change to the server's port if needed
 
     def __init__(self):
+        
+        self.receive_data_from_server( self.server_host, self.server_port)
+        pass
 
-        self.thread = threading.Thread(target=self.initialize_manager, daemon=True)
-        self.thread.start()
-
-
-    def initialize_manager(self):
-        self.receive_data_from_server(self.server_host, self.server_port)
-
+   
 
     def receive_data_from_server(self, server_host, server_port):
         try:
