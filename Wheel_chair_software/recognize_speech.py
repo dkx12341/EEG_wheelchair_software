@@ -3,9 +3,9 @@ import time
 import speech_recognition as sr
 import webrtcvad
 
-VAD_LEVEL = 2
-THRESHOLD = 0.2
-LOOP_DELAY = 0.1
+VAD_LEVEL = 2#2   
+THRESHOLD = 0.1 #0.2
+LOOP_DELAY = 0.1#0.1
 
 class RealTimeRecognizer:
     def __init__(self):
@@ -85,9 +85,12 @@ class RealTimeRecognizer:
                         self.transcription = ""
                         audio = self.recognizer.listen(source, timeout=5, phrase_time_limit=10)
                         audio_data = audio.get_raw_data()
+                        with open("test.wav", "wb") as f:
+                            f.write(audio.get_wav_data())
+                            print("Audio saved for debugging.")
 
-                        if self._is_speech_present(audio_data):
-                            segment_text = self.recognizer.recognize_google(audio, language="pl-PL")
+                        if self._is_speech_present(audio_data):#self._is_speech_present(audio_data):
+                            segment_text = self.recognizer.recognize_google(audio)#self.recognizer.recognize_google(audio, language="pl-PL")
                             self.transcription = segment_text
                             print("Segment transcription:", segment_text)
                         else:

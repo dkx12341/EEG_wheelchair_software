@@ -5,19 +5,22 @@ import sounddevice as sd
 import time
 import threading
 import sys
+import os
 import keyboard
 import pygame
 
-from face import FaceAnalyzer  # Import klasy FaceAnalyzer
-from recognition_speak import RealTimeRecognizer  # Import klasy RealTimeRecognizer
-from compare_face import FaceRecognition
+from analyze_face import FaceAnalyzer  # Import klasy FaceAnalyzer
+from recognize_speech import RealTimeRecognizer  # Import klasy RealTimeRecognizer
+from recognize_face import Recognize_face
 #from hand import HandSteeringAnalyzer
 from speak import AudioPlayer
-from wuzek import ChairConnect
+from chair_connection import ChairConnect
 from EEG_manager import EEG_manager
 
-AUDIO_PATH = "C:\Repos\EEG_applications\wuzek_kamera_kierunek/voice"
-FACE_PATH= "C:\Repos\EEG_applications\wuzek_kamera_kierunek/face"
+base_dir = os.path.dirname(os.path.realpath(__file__))
+
+AUDIO_PATH = os.path.join(base_dir, 'voice')
+FACE_PATH= os.path.join(base_dir, 'face')
 
 VIDEO_FACE_COMPARE = False
 
@@ -59,7 +62,7 @@ def beep(frequency, duration, samplerate=22050):
 
 def find_know_face():
     camera = cv2.VideoCapture(0)  # Pierwsza dostępna kamera
-    face_recognition_system = FaceRecognition(FACE_PATH, VIDEO_FACE_COMPARE, camera)
+    face_recognition_system = Recognize_face(FACE_PATH, VIDEO_FACE_COMPARE, camera)
     name = face_recognition_system.wait_for_face()
     face_recognition_system.video_capture.release()  # Zwolnij kamerę jawnie po zakończeniu
     cv2.destroyAllWindows()  # Zamknij wszystkie okna
@@ -172,7 +175,7 @@ def sterowanie_eeg():
 
 
 
-
+"""
 name = find_know_face()
 
 print(name)
@@ -240,3 +243,234 @@ while True:
     else:
         if tranckrypcja != "":
             beep(400, 0.1)
+"""
+class Main:
+
+    def __init__(self):
+        
+        self.base_dir = os.path.dirname(os.path.realpath(__file__))
+        self.AUDIO_PATH = os.path.join(base_dir, 'voice')
+        self.FACE_PATH= os.path.join(base_dir, 'face')
+
+        self.recognizer_audio = RealTimeRecognizer()
+        self.AUDIO_CONTROL= False
+
+        self.audio_player = AudioPlayer(AUDIO_PATH)
+
+        self.audio_thread = None
+        self.active_thread = None
+        self.stop_thread_event = threading.Event()
+
+        self.port = "/dev/ttyUSB0"
+        self.baud_rate = 115200
+
+        self.wcheelchair = ChairConnect(self.port, self.baud_rate)
+        self.camera = cv2.VideoCapture(0)  #First avaliable camera
+        self.face_analyzer = FaceAnalyzer(True, [self.camera])   
+
+        self.input_text=""
+
+        self.wheelchair_startup()          
+
+
+    def wheelchair_startup(self):
+
+        self.face_analyzer.start()
+        self.wcheelchair.start()
+        print("to start voice control type \"audio\" \n")
+        print("Steering by head movenents: \"head\" \nSteering by EEG: \"EEG\"\n Steering by following: \"follow\" \nSet movement speed: \"speed\" \n Shutdown: \"quit\"")
+        
+        while True:
+            time.sleep(0.1)
+            self.input_text= input("\nSteering method input: ")
+            self.input_text = self.input_text.lower()
+
+            self.compare_input(self.input_text)
+
+
+    def compare_input(self, input_text):
+
+        if input_text == "head":
+            print("head")
+            self.head_calibration()
+            self.start_new_thread(self.head_steering())
+
+        elif input_text == "eeg":
+            print("eeg")
+            self.start_new_thread(self.EEG_steering())
+                
+        elif input_text == "follow":
+            print("follow")
+
+        elif input_text == "speed":
+            print("speed")
+            self.start_new_thread(self.set_speed())
+
+        elif input_text == "audio" and self.AUDIO_CONTROL==False:
+            print("audio")
+            self.AUDIO_CONTROL=True
+            self.recognizer_audio.start()
+            self.transcribe_audio()
+            self.audio_thread = threading.Thread(target=self.transcribe_audio())
+            
+
+        elif input_text == "test":
+            print("test")
+            self.test_wheelchair()
+
+        elif input_text == "quit" or input_text == "q":
+            print("quit")
+            self.quit()
+            
+
+    def Play_audio(self, audio_f_name):
+        #print(name)
+        self.audio_player.play_audio(audio_f_name)
+        #time.sleep(2) 
+                   
+    def transcribe_audio(self):
+        while True:
+            time.sleep(0.1)
+            if True in self.face_analyzer.get_speaking_status():
+                self.recognizer_audio.start_recording()
+                print(self.face_analyzer.get_speaking_status())
+                pass
+            else:
+                self.input_text = self.recognizer_audio.stop_recording()
+                pass
+
+    def start_new_thread(self, function, *args):
+        """
+        Starts new thread using given function, while stopping priveus thread
+        """
+
+        if self.active_thread and self.active_thread.is_alive():
+            self.stop_thread_event.set()
+            self.active_thread.join()
+
+        
+        self.stop_thread_event.clear()
+
+        
+        self.active_thread = threading.Thread(target=function, args=args)
+        self.active_thread.start()
+
+    def find_known_face(self):
+        self.camera = cv2.VideoCapture(0)  # Pierwsza dostępna kamera
+        face_recognition_system = Recognize_face(FACE_PATH, VIDEO_FACE_COMPARE, camera)
+        name = face_recognition_system.wait_for_face()
+        face_recognition_system.video_capture.release()  # Zwolnij kamerę jawnie po zakończeniu
+        cv2.destroyAllWindows()  # Zamknij wszystkie okna
+        del face_recognition_system
+
+        # Upewnij się, że kamera została zwolniona
+        while self.camera.isOpened():
+            self.camera.release()
+            time.sleep(0.1)
+
+        return name
+
+    def head_calibration(self):
+        # Kalibracja pozycji środkowej dla wszystkich kamer
+        self.audio_player.play_audio("kalibracja", "przud")
+        time.sleep(1)
+        self.face_analyzer.calibrate_center()
+        self.audio_player.play_audio("kalibracja", "lewo")
+        time.sleep(1)
+        self.face_analyzer.calibrate_left()
+        self.audio_player.play_audio("kalibracja", "prawo")
+        time.sleep(1)
+        self.face_analyzer.calibrate_right()
+        self.audio_player.play_audio("kalibracja", "zakończono") 
+
+
+    def head_steering(self):
+       
+        if not self.face_analyzer.is_calibrated():
+            print("Camera is not calibrated")
+            return
+
+        self.wcheelchair.set_speed(100) 
+        print("head steering active")
+
+        while not stop_thread_event.is_set():
+
+            normalized_gaze = self.face_analyzer.get_normalized_gaze()
+
+            if normalized_gaze is None or normalized_gaze[0] is None:
+                print("Cant read user face, make sure the camera is working properly")
+                time.sleep(0.1)
+                continue
+
+
+            ster_value = max(min(int(normalized_gaze[0]), 100), -100)
+            #print(f"Steering: {ster_value}")  # Debugging wartości sterowania
+
+            self.wcheelchair.set_steer(ster_value)
+
+
+            time.sleep(0.05)
+
+        print("head steering finished")
+
+    def EEG_steering(self):
+    
+        print("EEG steering is active")
+
+        EEG_obj = EEG_manager()
+
+        while not stop_thread_event.is_set():
+            
+            self.wcheelchair.set_speed(EEG_obj.get_stright_output())
+            self.wcheelchair.set_steer(EEG_obj.get_turn_output())
+            
+            #print(f"Predkosc: " + str(EEG_obj.get_stright_output()) + "\n Skret: " + str(EEG_obj.get_turn_output))   
+
+            time.sleep(0.05)
+
+        print("EEG steering finished")
+
+    def set_speed(self):
+        value = None
+        print("\n type q or quit to go back \ninput speed value (-30,30)")
+        value = input("\n intput: ")
+        while value != "q" or value == "quit":
+            if value.isdigit() and int(value) <= 30 and int(value) >=-30:
+                while not stop_thread_event.is_set():
+                    self.wcheelchair.set_speed(100)
+                    time.sleep(1)
+            else:
+                print("\nBad input")
+            value = input("\n intput: ")
+
+    def quit(self):
+        self.recognizer_audio.stop()
+        self.face_analyzer.stop()
+        self.wcheelchair.stop()
+        if self.active_thread and self.active_thread.is_alive():
+            self.stop_thread_event.set()
+            self.active_thread.join()
+        if self.audio_thread and self.audio_thread.is_alive():
+            self.audio_thread.join()
+        sys.exit()
+
+
+    #test methods
+    def test_wheelchair():
+
+        beep(400, 0.1)
+
+
+        pass
+
+    def beep(frequency, duration, samplerate=22050):
+        """
+        generates sound of given frequency and duration
+        """
+        t = np.linspace(0, duration, int(samplerate * duration), endpoint=False)
+        wave = 0.5 * np.sin(2 * np.pi * frequency * t)
+        sd.play(wave, samplerate=samplerate, blocksize=1024, latency='high')
+        sd.wait()
+
+
+a = Main()

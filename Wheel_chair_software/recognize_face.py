@@ -3,12 +3,12 @@ import face_recognition
 import os
 import time
 
-CURENT_TIME = 0.5 # czas jaki musi upłynąć od pierwszego zarejestrowania twarzy do kolejnego aby zrucić imie twarzy
+CURENT_TIME = 0.5 # the time that must elapse from the first registration of a face to the next one to collect the face's name
 
-class FaceRecognition:
+class Recognize_face:
     def __init__(self, faces_directory, display_video, camera):
         """
-        Initializes the FaceRecognition class to detect if a visible face in the camera
+        Initializes the Recognize_face class to detect if a visible face in the camera
         matches a stored face, returning the name of the person or 'unknown' if not found.
 
         Parameters:
