@@ -16,6 +16,7 @@ from recognize_face import Recognize_face
 from speak import AudioPlayer
 from chair_connection import ChairConnect
 from EEG_manager import EEG_manager
+from silhuette_tracking import HumanTracker
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -264,7 +265,7 @@ class Main:
         self.port = "/dev/ttyUSB0"
         self.baud_rate = 115200
 
-        self.wcheelchair = ChairConnect(self.port, self.baud_rate)
+        self.wheelchair = ChairConnect(self.port, self.baud_rate)
         self.camera = cv2.VideoCapture(0)  #First avaliable camera
         self.face_analyzer = FaceAnalyzer(True, [self.camera])   
 
@@ -276,7 +277,7 @@ class Main:
     def wheelchair_startup(self):
 
         self.face_analyzer.start()
-        self.wcheelchair.start()
+        self.wheelchair.start()
         print("to start voice control type \"audio\" \n")
         print("Steering by head movenents: \"head\" \nSteering by EEG: \"EEG\"\n Steering by following: \"follow\" \nSet movement speed: \"speed\" \n Shutdown: \"quit\"")
         
@@ -286,7 +287,6 @@ class Main:
             self.input_text = self.input_text.lower()
 
             self.compare_input(self.input_text)
-
 
     def compare_input(self, input_text):
 
@@ -384,13 +384,14 @@ class Main:
         self.audio_player.play_audio("kalibracja", "zakończono") 
 
 
+
     def head_steering(self):
        
         if not self.face_analyzer.is_calibrated():
             print("Camera is not calibrated")
             return
 
-        self.wcheelchair.set_speed(100) 
+        self.wheelchair.set_speed(100) 
         print("head steering active")
 
         while not stop_thread_event.is_set():
@@ -406,7 +407,7 @@ class Main:
             ster_value = max(min(int(normalized_gaze[0]), 100), -100)
             #print(f"Steering: {ster_value}")  # Debugging wartości sterowania
 
-            self.wcheelchair.set_steer(ster_value)
+            self.wheelchair.set_steer(ster_value)
 
 
             time.sleep(0.05)
@@ -421,14 +422,35 @@ class Main:
 
         while not stop_thread_event.is_set():
             
-            self.wcheelchair.set_speed(EEG_obj.get_stright_output())
-            self.wcheelchair.set_steer(EEG_obj.get_turn_output())
+            self.wheelchair.set_speed(EEG_obj.get_stright_output())
+            self.wheelchair.set_steer(EEG_obj.get_turn_output())
             
             #print(f"Predkosc: " + str(EEG_obj.get_stright_output()) + "\n Skret: " + str(EEG_obj.get_turn_output))   
 
             time.sleep(0.05)
 
         print("EEG steering finished")
+
+
+    def follow(self):
+        print("silhouette tracking is active")
+
+        tracker = HumanTracker()
+        tracker.start()
+        self.wheelchair.set_speed(20)
+
+        while not stop_thread_event.is_set():
+            
+            #self.wheelchair.set_speed(EEG_obj.get_stright_output())
+            self.wheelchair.set_steer(tracker.get_offset())
+            
+            #print(f"Predkosc: " + str(EEG_obj.get_stright_output()) + "\n Skret: " + str(EEG_obj.get_turn_output))   
+
+            time.sleep(0.05)
+
+        print("EEG steering finished")
+
+
 
     def set_speed(self):
         value = None
@@ -437,16 +459,19 @@ class Main:
         while value != "q" or value == "quit":
             if value.isdigit() and int(value) <= 30 and int(value) >=-30:
                 while not stop_thread_event.is_set():
-                    self.wcheelchair.set_speed(100)
+                    self.wheelchair.set_speed(100)
                     time.sleep(1)
             else:
                 print("\nBad input")
             value = input("\n intput: ")
+    
+
+
 
     def quit(self):
         self.recognizer_audio.stop()
         self.face_analyzer.stop()
-        self.wcheelchair.stop()
+        self.wheelchair.stop()
         if self.active_thread and self.active_thread.is_alive():
             self.stop_thread_event.set()
             self.active_thread.join()
@@ -460,8 +485,8 @@ class Main:
 
         beep(400, 0.1)
 
-
         pass
+
 
     def beep(frequency, duration, samplerate=22050):
         """
