@@ -39,13 +39,23 @@ class HumanTracker:
                 if cls == 0 and confidence > 0.75:  # Detekcja człowieka
                     detected = True
                     self.offset = human_center - frame_center
+                    print("\nOffset: " + str(self.offset) + "\n")
                     break
 
             if not detected:
                 self.offset = 0
                 self.direction = "Brak sylwetki"
+        
+
+
+
+            #window for testing
+            cv2.imshow("Human Detection with YOLO", frame)
+
+
 
             time.sleep(0.01)  # Zapobiega przeciążeniu CPU
+
 
     def start(self):
         """Rozpoczyna śledzenie w nowym wątku."""
@@ -72,7 +82,7 @@ class HumanTracker:
         cv2.destroyAllWindows()
 
 
-"""
+
 # Testowanie klasy
 if __name__ == "__main__":
     tracker = HumanTracker()
@@ -81,9 +91,8 @@ if __name__ == "__main__":
     try:
         while True:
             offset = tracker.get_offset()
-            direction = tracker.get_direction()
-            print(f"Offset: {offset}, Direction: {direction}")
+            #direction = tracker.direction()
+            #print(f"Offset: {offset}, Direction: {direction}")
             time.sleep(1)
     except KeyboardInterrupt:
         tracker.stop()
-"""
