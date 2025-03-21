@@ -18,6 +18,7 @@ from chair_connection import ChairConnect
 from EEG_manager import EEG_manager
 from silhuette_tracking import HumanTracker
 
+
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
 AUDIO_PATH = os.path.join(base_dir, 'voice')
@@ -269,7 +270,13 @@ class Main:
         self.camera = cv2.VideoCapture(0)  #First avaliable camera
         self.face_analyzer = FaceAnalyzer(True, [self.camera])   
 
-        self.input_text=""
+        self.speed = 0 
+        self.turn = 0
+        
+        self.max_speed = 100
+        self.max_turn = 100
+        self.min_speed = -100
+        self.min_turn = -100
 
         self.wheelchair_startup()          
 
@@ -278,49 +285,6 @@ class Main:
 
         self.face_analyzer.start()
         self.wheelchair.start()
-        print("to start voice control type \"audio\" \n")
-        print("Steering by head movenents: \"head\" \nSteering by EEG: \"EEG\"\n Steering by following: \"follow\" \nSet movement speed: \"speed\" \n Shutdown: \"quit\"")
-        
-        while True:
-            time.sleep(0.1)
-            self.input_text= input("\nSteering method input: ")
-            self.input_text = self.input_text.lower()
-
-            self.compare_input(self.input_text)
-
-    def compare_input(self, input_text):
-
-        if input_text == "head":
-            print("head")
-            self.head_calibration()
-            self.start_new_thread(self.head_steering())
-
-        elif input_text == "eeg":
-            print("eeg")
-            self.start_new_thread(self.EEG_steering())
-                
-        elif input_text == "follow":
-            print("follow")
-
-        elif input_text == "speed":
-            print("speed")
-            self.start_new_thread(self.set_speed())
-
-        elif input_text == "audio" and self.AUDIO_CONTROL==False:
-            print("audio")
-            self.AUDIO_CONTROL=True
-            self.recognizer_audio.start()
-            self.transcribe_audio()
-            self.audio_thread = threading.Thread(target=self.transcribe_audio())
-            
-
-        elif input_text == "test":
-            print("test")
-            self.test_wheelchair()
-
-        elif input_text == "quit" or input_text == "q":
-            print("quit")
-            self.quit()
             
 
     def Play_audio(self, audio_f_name):
@@ -355,6 +319,14 @@ class Main:
         self.active_thread = threading.Thread(target=function, args=args)
         self.active_thread.start()
 
+
+
+    def stop_thread(self):
+
+        if self.active_thread and self.active_thread.is_alive():
+                self.stop_thread_event.set()
+                self.active_thread.join()
+
     def find_known_face(self):
         self.camera = cv2.VideoCapture(0)  # Pierwsza dostępna kamera
         face_recognition_system = Recognize_face(FACE_PATH, VIDEO_FACE_COMPARE, camera)
@@ -382,7 +354,6 @@ class Main:
         time.sleep(1)
         self.face_analyzer.calibrate_right()
         self.audio_player.play_audio("kalibracja", "zakończono") 
-
 
 
     def head_steering(self):
@@ -431,6 +402,34 @@ class Main:
 
         print("EEG steering finished")
 
+    def button_steering(self):
+
+        print("button steering is active")
+       
+        while not stop_thread_event.is_set():
+                
+                self.wheelchair.set_speed(self.speed)
+                self.wheelchair.set_steer(self.turn)
+
+
+                time.sleep(0.05)
+        self.speed = 0
+        self.turn = 0
+        print("button steering finished")
+
+    def change_speed(self, value):
+        self.speed = self.speed + value
+        if(self.speed >= 100):
+            self.speed = 100
+        elif (self.speed <= -100):
+            self.speed = -100
+
+    def change_turn(self, value):
+        self.turn = self.turn + value
+        if(self.turn >= 100):
+            self.turn = 100
+        elif (self.turn <= -100):
+            self.turn = -100
 
     def follow(self):
         print("silhouette tracking is active")
@@ -452,21 +451,7 @@ class Main:
 
 
 
-    def set_speed(self):
-        value = None
-        print("\n type q or quit to go back \ninput speed value (-30,30)")
-        value = input("\n intput: ")
-        while value != "q" or value == "quit":
-            if value.isdigit() and int(value) <= 30 and int(value) >=-30:
-                while not stop_thread_event.is_set():
-                    self.wheelchair.set_speed(100)
-                    time.sleep(1)
-            else:
-                print("\nBad input")
-            value = input("\n intput: ")
-    
-
-
+                    
 
     def quit(self):
         self.recognizer_audio.stop()
@@ -497,5 +482,5 @@ class Main:
         sd.play(wave, samplerate=samplerate, blocksize=1024, latency='high')
         sd.wait()
 
-
-a = Main()
+if __name__ == "__main__":
+    a = Main()
