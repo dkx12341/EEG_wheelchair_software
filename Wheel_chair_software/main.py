@@ -359,8 +359,7 @@ class Main:
     def head_steering(self):
        
         if not self.face_analyzer.is_calibrated():
-            print("Camera is not calibrated")
-            return
+            self.head_calibration()
 
         self.wheelchair.set_speed(100) 
         print("head steering active")
@@ -376,7 +375,7 @@ class Main:
 
 
             ster_value = max(min(int(normalized_gaze[0]), 100), -100)
-            #print(f"Steering: {ster_value}")  # Debugging wartości sterowania
+            print(f"Steering: {ster_value}")  # Debugging wartości sterowania
 
             self.wheelchair.set_steer(ster_value)
 

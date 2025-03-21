@@ -18,12 +18,15 @@ class GraphicalUserInterface:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.controller = controller
         # Listbox to display logs
-        self.log_list = Listbox(frame, width=60, height=15, yscrollcommand=scrollbar.set)
+        self.log_list = Listbox(frame, width=60, height=20, yscrollcommand=scrollbar.set)
         self.log_list.pack()
         scrollbar.config(command=self.log_list.yview)
 
-        btn_steering_btn =tk.Button(self.root, text=f"Button steering", command=lambda: self.start_button_steering(),width=15, height=4)
-        btn_steering_btn.grid(row=1, column=3, padx=5, pady=5)
+        btn_steering_btn =tk.Button(self.root, text=f"Button steering", command=lambda: (self.add_log(f"Button steering active"), self.start_button_steering()),width=15, height=4)
+        btn_steering_btn.grid(row=1, column=1, padx=5, pady=5)
+
+        head_steering_btn =tk.Button(self.root, text=f"head steering", command=lambda: (self.add_log(f"head steering active"), self.start_head_steering()),width=15, height=4)
+        head_steering_btn.grid(row=2, column=1, padx=5, pady=5)
         
         # Buttons to add logs
         
@@ -67,12 +70,12 @@ class GraphicalUserInterface:
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
         
     def start_button_steering(self):
-       
-        #self.add_log(f"Button steering active")
+        
         self.controller.start_new_thread(self.controller.button_steering)
         self.open_set_speed_window() 
 
-
+    def start_head_steering(self):
+        self.controller.start_new_thread(self.controller.head_steering)
 
 if __name__ == "__main__":
     main = Main()
