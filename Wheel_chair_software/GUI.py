@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Listbox, Scrollbar
+from tkinter import Listbox, Scrollbar, Label
 from main import Main
 
 class GraphicalUserInterface:
@@ -25,8 +25,11 @@ class GraphicalUserInterface:
         btn_steering_btn =tk.Button(self.root, text=f"Button steering", command=lambda: (self.add_log(f"Button steering active"), self.start_button_steering()),width=15, height=4)
         btn_steering_btn.grid(row=1, column=1, padx=5, pady=5)
 
-        head_steering_btn =tk.Button(self.root, text=f"head steering", command=lambda: (self.add_log(f"head steering active"), self.start_head_steering()),width=15, height=4)
+        head_steering_btn =tk.Button(self.root, text=f"Head steering", command=lambda: (self.add_log(f"head steering active"), self.start_head_steering()),width=15, height=4)
         head_steering_btn.grid(row=2, column=1, padx=5, pady=5)
+
+        EEG_steering_btn =tk.Button(self.root, text=f"EEG steering", command=lambda: (self.add_log(f"eeg steering active"), self.start_EEG_steering()),width=15, height=4)
+        EEG_steering_btn.grid(row=3, column=1, padx=5, pady=5)
         
         # Buttons to add logs
         
@@ -35,9 +38,9 @@ class GraphicalUserInterface:
         self.log_list.insert(tk.END, message)
         self.log_list.yview(tk.END)  # Auto-scroll to the latest log
 
-    def open_set_speed_window(self):
+    def open_button_steering_window(self):
         self.set_speed_window = tk.Toplevel(self.root)
-        self.set_speed_window.title("Set speed")
+        self.set_speed_window.title("Button Steering")
         self.set_speed_window.geometry("800x600")
         
         # Frame for listbox and scrollbar
@@ -65,17 +68,52 @@ class GraphicalUserInterface:
         turn_lt_btn.grid(row=2, column=2, padx=5, pady=5)
         
         
-        exit_btn = tk.Button(self.set_speed_window, text="Exit", command=(self.set_speed_window.destroy))
+        exit_btn = tk.Button(self.set_speed_window, text="Exit", command= lambda:(self.controller.stop_thread(), self.set_speed_window.destroy()))
+        #exit_btn.pack()
+        exit_btn.grid(row=4, column=3, padx=10, pady=10)
+    
+
+    def open_head_steering_window(self):
+        self.head_steering_window = tk.Toplevel(self.root)
+        self.head_steering_window.title("Head steering")
+        self.head_steering_window.geometry("800x600")
+        
+        # Frame for listbox and scrollbar
+        frame_hd = tk.Frame(self.head_steering_window)
+        frame_hd.grid(row=0, column=1, columnspan=3, padx=10, pady=10)
+
+        
+        # Scrollbar
+        scrollbar = Scrollbar(frame_hd)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        
+        # Listbox to display logs
+        self.log_list = Listbox(frame_hd, width=50, height=10, yscrollcommand=scrollbar.set)
+        self.log_list.pack()
+        scrollbar.config(command=self.log_list.yview)
+        
+        # buttons
+
+        exit_btn = tk.Button(self.head_steering_window, text="Exit", command= lambda:(self.controller.stop_thread(), self.head_steering_window.destroy()))
         #exit_btn.pack()
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
         
+
+
     def start_button_steering(self):
         
         self.controller.start_new_thread(self.controller.button_steering)
-        self.open_set_speed_window() 
+        self.open_button_steering_window() 
 
     def start_head_steering(self):
         self.controller.start_new_thread(self.controller.head_steering)
+        self.open_head_steering_window() 
+
+    def start_EEG_steering(self):
+        self.controller.start_new_thread(self.controller.EEG_steering)
+
+
 
 if __name__ == "__main__":
     main = Main()

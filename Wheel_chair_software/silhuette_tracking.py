@@ -46,13 +46,8 @@ class HumanTracker:
                 self.offset = 0
                 self.direction = "Brak sylwetki"
         
-
-
-
             #window for testing
             cv2.imshow("Human Detection with YOLO", frame)
-
-
 
             time.sleep(0.01)  # Zapobiega przeciążeniu CPU
 

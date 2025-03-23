@@ -8,6 +8,7 @@ import sys
 import os
 import keyboard
 import pygame
+import platform
 
 from analyze_face import FaceAnalyzer  # Import klasy FaceAnalyzer
 from recognize_speech import RealTimeRecognizer  # Import klasy RealTimeRecognizer
@@ -263,7 +264,9 @@ class Main:
         self.active_thread = None
         self.stop_thread_event = threading.Event()
 
-        self.port = "/dev/ttyUSB0"
+        self.check_system()
+
+        self.port = "COM8"
         self.baud_rate = 115200
 
         self.wheelchair = ChairConnect(self.port, self.baud_rate)
@@ -280,28 +283,23 @@ class Main:
 
         self.wheelchair_startup()          
 
+    def check_system(self):
+        if(sys.platform =="linux"):
+            print("linux")
+            self.port = "/dev/ttyUSB0"
+            self.baud_rate = 115200
+
+        elif(sys.platform == "win32"):
+            print("windows")
+
 
     def wheelchair_startup(self):
 
-        self.face_analyzer.start()
+        #self.face_analyzer.start()
         self.wheelchair.start()
-            
 
-    def Play_audio(self, audio_f_name):
-        #print(name)
-        self.audio_player.play_audio(audio_f_name)
-        #time.sleep(2) 
-                   
-    def transcribe_audio(self):
-        while True:
-            time.sleep(0.1)
-            if True in self.face_analyzer.get_speaking_status():
-                self.recognizer_audio.start_recording()
-                print(self.face_analyzer.get_speaking_status())
-                pass
-            else:
-                self.input_text = self.recognizer_audio.stop_recording()
-                pass
+
+    #start_new_thread called every time new steering method is selected
 
     def start_new_thread(self, function, *args):
         """
@@ -318,14 +316,32 @@ class Main:
         
         self.active_thread = threading.Thread(target=function, args=args)
         self.active_thread.start()
-
-
-
+   
     def stop_thread(self):
 
         if self.active_thread and self.active_thread.is_alive():
                 self.stop_thread_event.set()
                 self.active_thread.join()
+
+
+
+    #functions to operate inside function
+
+    def Play_audio(self, audio_f_name):
+        #print(name)
+        self.audio_player.play_audio(audio_f_name)
+        #time.sleep(2) 
+                   
+    def transcribe_audio(self):
+        while True:
+            time.sleep(0.1)
+            if True in self.face_analyzer.get_speaking_status():
+                self.recognizer_audio.start_recording()
+                print(self.face_analyzer.get_speaking_status())
+                pass
+            else:
+                self.input_text = self.recognizer_audio.stop_recording()
+                pass
 
     def find_known_face(self):
         self.camera = cv2.VideoCapture(0)  # Pierwsza dostępna kamera
@@ -355,16 +371,35 @@ class Main:
         self.face_analyzer.calibrate_right()
         self.audio_player.play_audio("kalibracja", "zakończono") 
 
+    def change_speed(self, value):
+        self.speed = self.speed + value
+        if(self.speed >= 100):
+            self.speed = 100
+        elif (self.speed <= -100):
+            self.speed = -100
+
+    def change_turn(self, value):
+        self.turn = self.turn + value
+        if(self.turn >= 100):
+            self.turn = 100
+        elif (self.turn <= -100):
+            self.turn = -100
+
+
+
+
+    #Steering method functions, call them as start_new_thread argument
 
     def head_steering(self):
-       
+        self.face_analyzer.start()
+
         if not self.face_analyzer.is_calibrated():
             self.head_calibration()
 
         self.wheelchair.set_speed(100) 
         print("head steering active")
 
-        while not stop_thread_event.is_set():
+        while not self.stop_thread_event.is_set():
 
             normalized_gaze = self.face_analyzer.get_normalized_gaze()
 
@@ -390,7 +425,7 @@ class Main:
 
         EEG_obj = EEG_manager()
 
-        while not stop_thread_event.is_set():
+        while not self.stop_thread_event.is_set():
             
             self.wheelchair.set_speed(EEG_obj.get_stright_output())
             self.wheelchair.set_steer(EEG_obj.get_turn_output())
@@ -405,7 +440,7 @@ class Main:
 
         print("button steering is active")
        
-        while not stop_thread_event.is_set():
+        while not self.stop_thread_event.is_set():
                 
                 self.wheelchair.set_speed(self.speed)
                 self.wheelchair.set_steer(self.turn)
@@ -416,20 +451,6 @@ class Main:
         self.turn = 0
         print("button steering finished")
 
-    def change_speed(self, value):
-        self.speed = self.speed + value
-        if(self.speed >= 100):
-            self.speed = 100
-        elif (self.speed <= -100):
-            self.speed = -100
-
-    def change_turn(self, value):
-        self.turn = self.turn + value
-        if(self.turn >= 100):
-            self.turn = 100
-        elif (self.turn <= -100):
-            self.turn = -100
-
     def follow(self):
         print("silhouette tracking is active")
 
@@ -437,13 +458,12 @@ class Main:
         tracker.start()
         self.wheelchair.set_speed(20)
 
-        while not stop_thread_event.is_set():
+        while not self.stop_thread_event.is_set():
             
             #self.wheelchair.set_speed(EEG_obj.get_stright_output())
             self.wheelchair.set_steer(tracker.get_offset())
             
-            #print(f"Predkosc: " + str(EEG_obj.get_stright_output()) + "\n Skret: " + str(EEG_obj.get_turn_output))   
-
+          
             time.sleep(0.05)
 
         print("EEG steering finished")

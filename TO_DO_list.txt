@@ -1,0 +1,19 @@
+
+
+Podążanie za sylwetką:
+- Implementacja
+- dostosowanie szybkości do wielkości sylwetki
+
+
+
+Sterowanie głową:
+
+- Możliwość sterowania prędkością z użyciem przycisków
+- obraz wewnątrz GUI
+
+
+Sterowanie głosem:
+
+- implementacja (Jak?)
+- naprawa na windows
+- 
