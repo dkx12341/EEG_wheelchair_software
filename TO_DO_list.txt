@@ -1,8 +1,12 @@
-
+Ogólne:
+- przenieść sterowanie prędkością do zmiennej Speed wewnątrz main
+- resetowanie prędkości po zakończeniu sterowania (prześlij wartość 0)
+- pozbycie się magicznych cyferek (max, min prędkości, zmiany prędkości)
 
 Podążanie za sylwetką:
 - Implementacja
 - dostosowanie szybkości do wielkości sylwetki
+- jak rozpoznać odległość bez widzenia całej sylwetki?
 
 
 
@@ -17,3 +21,6 @@ Sterowanie głosem:
 - implementacja (Jak?)
 - naprawa na windows
 - 
+
+Sterowanie EEG:
+- odmowa sterowania na linux

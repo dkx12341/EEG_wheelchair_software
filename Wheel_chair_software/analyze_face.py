@@ -14,6 +14,8 @@ TIME_SLEEP = 0.01  # Delay between loops to avoid overloading CPU
 CALIBRATION_TIMEOUT = 5  # Timeout for gaze calibration
 
 class FaceAnalyzer:
+
+
     def __init__(self, display, cameras):
         """
         Initializes the FaceAnalyzer for detecting gaze direction and speaking status.
@@ -22,6 +24,7 @@ class FaceAnalyzer:
         - display: Boolean to control whether to display the video output for debugging.
         - cameras: List of camera objects to process.
         """
+        
         self.display = display
         self.key_points = [{} for _ in cameras]
         self.running = False
@@ -46,6 +49,10 @@ class FaceAnalyzer:
 
         self.speaking_timer = [0] * self.num_cameras
         self.is_speaking_status = [False] * self.num_cameras
+
+
+        #video feed
+        self.video = None
 
     def start(self):
         """Starts the camera processing in a new thread."""
@@ -232,6 +239,7 @@ class FaceAnalyzer:
                         cv2.putText(frame, speaking_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
                         cv2.imshow(f"Camera {cam_idx}", frame)
+                        self.video = frame
                         if cv2.waitKey(1) & 0xFF == ord('q'):
                             self.stop()
                             break

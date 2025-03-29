@@ -276,10 +276,10 @@ class Main:
         self.speed = 0 
         self.turn = 0
         
-        self.max_speed = 100
-        self.max_turn = 100
-        self.min_speed = -100
-        self.min_turn = -100
+        self.MAX_SPEED = 100
+        self.MAX_TURN = 100
+        self.MIN_SPEED = -100
+        self.MIN_TURN = -100
 
         self.wheelchair_startup()          
 
@@ -305,7 +305,12 @@ class Main:
         """
         Starts new thread using given function, while stopping priveus thread
         """
+        self.speed = 0
+        self.turn = 0
+        self.wheelchair.set_speed(self.speed)
+        self.wheelchair.set_steer(self.turn)
 
+    
         if self.active_thread and self.active_thread.is_alive():
             self.stop_thread_event.set()
             self.active_thread.join()
@@ -318,14 +323,20 @@ class Main:
         self.active_thread.start()
    
     def stop_thread(self):
+        self.speed = 0
+        self.turn = 0
+        self.wheelchair.set_speed(self.speed)
+        self.wheelchair.set_steer(self.turn)
 
         if self.active_thread and self.active_thread.is_alive():
                 self.stop_thread_event.set()
                 self.active_thread.join()
 
+                
 
 
-    #functions to operate inside function
+
+    #functions to operate inside of other methods
 
     def Play_audio(self, audio_f_name):
         #print(name)
@@ -373,17 +384,17 @@ class Main:
 
     def change_speed(self, value):
         self.speed = self.speed + value
-        if(self.speed >= 100):
-            self.speed = 100
-        elif (self.speed <= -100):
-            self.speed = -100
+        if(self.speed >= self.MAX_SPEED):
+            self.speed = self.MAX_SPEED
+        elif (self.speed <= self.MIN_SPEED):
+            self.speed = self.MIN_SPEED
 
     def change_turn(self, value):
         self.turn = self.turn + value
-        if(self.turn >= 100):
-            self.turn = 100
-        elif (self.turn <= -100):
-            self.turn = -100
+        if(self.turn >= self.MAX_TURN):
+            self.turn = self.MAX_TURN
+        elif (self.turn <= self.MIN_TURN):
+            self.turn = self.MIN_TURN
 
 
 
@@ -393,10 +404,8 @@ class Main:
     def head_steering(self):
         self.face_analyzer.start()
 
-        if not self.face_analyzer.is_calibrated():
-            self.head_calibration()
+        self.head_calibration()
 
-        self.wheelchair.set_speed(100) 
         print("head steering active")
 
         while not self.stop_thread_event.is_set():
@@ -409,15 +418,16 @@ class Main:
                 continue
 
 
-            ster_value = max(min(int(normalized_gaze[0]), 100), -100)
+            ster_value = max(min(int(normalized_gaze[0]), self.MAX_TURN), self.MIN_TURN)
             print(f"Steering: {ster_value}")  # Debugging wartości sterowania
 
             self.wheelchair.set_steer(ster_value)
-
+            self.wheelchair.set_speed(self.speed) 
 
             time.sleep(0.05)
 
         print("head steering finished")
+        self.face_analyzer.stop()
 
     def EEG_steering(self):
     
@@ -447,8 +457,6 @@ class Main:
 
 
                 time.sleep(0.05)
-        self.speed = 0
-        self.turn = 0
         print("button steering finished")
 
     def follow(self):
