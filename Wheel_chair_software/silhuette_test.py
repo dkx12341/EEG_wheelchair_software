@@ -7,6 +7,11 @@ from ultralytics import YOLO  # Import YOLO z biblioteki ultralytics
 # 'yolov8n.pt' to plik modelu YOLO w wersji nano (kompromis pomiędzy dokładnością a szybkością)
 model = YOLO('yolov8n.pt')
 
+
+def scale_offset(offset, frame_width):
+    
+    return ((offset / frame_width) * 100)
+
 # Funkcja detect_human - przetwarza obraz i wykrywa sylwetki ludzi
 def detect_human(image):
     # Wykonanie detekcji na obrazie przy użyciu modelu YOLO
@@ -23,10 +28,11 @@ def detect_human(image):
 
         human_center = (x1 + x2) // 2
         human_height = (h)
+        human_height_2 = y2 - y1
         human_width = (w)
         bottom_corner = (y1)
         # 0,0 at left upper corner
-        # y2 is lower corner
+        # y2 is lower corner, y1 is higher
 
 
 
@@ -36,11 +42,13 @@ def detect_human(image):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
             offset = human_center - frame_center
+            offset = scale_offset(offset, image.shape[0])
+            print(offset)
             #direction = "Skręć w lewo -" if offset < 0 else "Skręć w prawo +" if offset > 0 else "Sylwetka w centrum"
             adjustment = abs(offset)
             adjustment_scaled = min(int((adjustment / max_offset) * 100), 100)
             #adjustment_message = f"{direction}{adjustment_scaled}px" if adjustment_scaled > 0 else "Sylwetka w centrum"
-            print(str(y1) +" " + str(y2)+" " + str(x1) +" " + str(x2))
+            #print(str(human_height) +" " + str(human_height_2))
 
     return image
 

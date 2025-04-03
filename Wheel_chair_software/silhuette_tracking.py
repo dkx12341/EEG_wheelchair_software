@@ -14,7 +14,7 @@ class HumanTracker:
         self.thread = None
         self.offset = 0  # silhouette offset from the middle
         self.direction = "silhouette in centre"  # correction direction
-        self.max_offset = 200  # Maksymalny odchył od środka, skalowany do 100
+        self.max_offset = 100
         self.cap = cv2.VideoCapture(camera_index)
 
     def _process_frame(self):
@@ -39,6 +39,7 @@ class HumanTracker:
                 if cls == 0 and confidence > 0.75:  # Detekcja człowieka
                     detected = True
                     self.offset = human_center - frame_center
+                    self.scale_offset(frame.shape[0])
                     print("\nOffset: " + str(self.offset) + "\n")
                     break
 
@@ -66,6 +67,10 @@ class HumanTracker:
             if self.thread is not None:
                 self.thread.join()
 
+    def scale_offset(self, frame_width):
+    
+        self.offset = ((self.offset / frame_width) * self.max_offset)
+
     def get_offset(self):
         """Zwraca przesunięcie sylwetki względem środka obrazu."""
         return self.offset
@@ -87,7 +92,7 @@ if __name__ == "__main__":
         while True:
             offset = tracker.get_offset()
             #direction = tracker.direction()
-            #print(f"Offset: {offset}, Direction: {direction}")
+            print(f"Offset: {offset}")
             time.sleep(1)
     except KeyboardInterrupt:
         tracker.stop()

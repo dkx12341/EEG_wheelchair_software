@@ -295,7 +295,6 @@ class Main:
 
     def wheelchair_startup(self):
 
-        #self.face_analyzer.start()
         self.wheelchair.start()
 
 
@@ -455,7 +454,6 @@ class Main:
                 self.wheelchair.set_speed(self.speed)
                 self.wheelchair.set_steer(self.turn)
 
-
                 time.sleep(0.05)
         print("button steering finished")
 
@@ -464,13 +462,11 @@ class Main:
 
         tracker = HumanTracker()
         tracker.start()
-        self.wheelchair.set_speed(20)
 
         while not self.stop_thread_event.is_set():
             
-            #self.wheelchair.set_speed(EEG_obj.get_stright_output())
             self.wheelchair.set_steer(tracker.get_offset())
-            
+            self.wheelchair.set_speed(self.speed)
           
             time.sleep(0.05)
 

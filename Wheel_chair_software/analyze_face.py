@@ -238,7 +238,7 @@ class FaceAnalyzer:
                         speaking_text = "Speaking" if self.is_speaking_status[cam_idx] else "Not Speaking"
                         cv2.putText(frame, speaking_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-                        cv2.imshow(f"Camera {cam_idx}", frame)
+                        #cv2.imshow(f"Camera {cam_idx}", frame)
                         self.video = frame
                         if cv2.waitKey(1) & 0xFF == ord('q'):
                             self.stop()
