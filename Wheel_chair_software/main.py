@@ -272,6 +272,7 @@ class Main:
         self.wheelchair = ChairConnect(self.port, self.baud_rate)
         self.camera = cv2.VideoCapture(0)  #First avaliable camera
         self.face_analyzer = FaceAnalyzer(True, [self.camera])   
+        self.human_tracker = HumanTracker()
 
         self.speed = 0 
         self.turn = 0
@@ -457,15 +458,15 @@ class Main:
                 time.sleep(0.05)
         print("button steering finished")
 
-    def follow(self):
+    def following(self):
         print("silhouette tracking is active")
 
-        tracker = HumanTracker()
-        tracker.start()
+       
+        self.human_tracker.start_detection()
 
         while not self.stop_thread_event.is_set():
             
-            self.wheelchair.set_steer(tracker.get_offset())
+            self.wheelchair.set_steer(self.human_tracker.get_offset())
             self.wheelchair.set_speed(self.speed)
           
             time.sleep(0.05)

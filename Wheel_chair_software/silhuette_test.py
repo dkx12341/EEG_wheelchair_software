@@ -24,17 +24,8 @@ def detect_human(image):
         confidence = result.conf.item()
         x1, y1, x2, y2 = map(int, result.xyxy[0])
 
-        x, y, w, h  = map(int, result.xywh[0])
-
         human_center = (x1 + x2) // 2
-        human_height = (h)
-        human_height_2 = y2 - y1
-        human_width = (w)
-        bottom_corner = (y1)
-        # 0,0 at left upper corner
-        # y2 is lower corner, y1 is higher
-
-
+        
 
         if cls == 0 and confidence > 0.75:
             cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
@@ -44,13 +35,14 @@ def detect_human(image):
             offset = human_center - frame_center
             offset = scale_offset(offset, image.shape[0])
             print(offset)
-            #direction = "Skręć w lewo -" if offset < 0 else "Skręć w prawo +" if offset > 0 else "Sylwetka w centrum"
-            adjustment = abs(offset)
-            adjustment_scaled = min(int((adjustment / max_offset) * 100), 100)
-            #adjustment_message = f"{direction}{adjustment_scaled}px" if adjustment_scaled > 0 else "Sylwetka w centrum"
-            #print(str(human_height) +" " + str(human_height_2))
+          
+          
+            
+
 
     return image
+
+
 
 cap = cv2.VideoCapture(0)
 

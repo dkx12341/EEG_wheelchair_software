@@ -4,95 +4,57 @@ import time
 from ultralytics import YOLO
 
 class HumanTracker:
-    def __init__(self, camera_index=0, model_path="yolov8n.pt"):
-        """
-        Class for following a Human using Yolo
-        """
-        self.model = YOLO(model_path)  
-        self.camera_index = camera_index
-        self.running = False
-        self.thread = None
-        self.offset = 0  # silhouette offset from the middle
-        self.direction = "silhouette in centre"  # correction direction
-        self.max_offset = 100
+    def __init__(self, model_path='yolov8n.pt', camera_index=0):
+        # Initialize YOLO model
+        self.model = YOLO(model_path)
         self.cap = cv2.VideoCapture(camera_index)
+        self.frame_center = None
+        self.MAX_OFFSET = 100
+        self.video = None
 
-    def _process_frame(self):
-        """
-        Przetwarza obraz z kamery i aktualizuje dane.
-        """
-        while self.running:
+
+    def scale_offset(self, offset, frame_width):
+        return (offset / frame_width) * self.MAX_OFFSET
+
+    def detect_human(self, image):
+        results = self.model(image)
+        self.frame_center = image.shape[1] // 2
+
+        for result in results[0].boxes:
+            cls = result.cls
+            confidence = result.conf.item()
+            x1, y1, x2, y2 = map(int, result.xyxy[0])
+            human_center = (x1 + x2) // 2
+
+            if cls == 0 and confidence > 0.75:
+                cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                cv2.putText(image, f"Human: {confidence:.2f}", (x1, y1 - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                
+                offset = human_center - self.frame_center
+                offset = self.scale_offset(offset, image.shape[0])
+                self.video = image
+                print(offset)
+        
+        return image
+
+    def start_detection(self):
+        while True:
             ret, frame = self.cap.read()
             if not ret:
-                continue
-
-            results = self.model(frame)
-            frame_center = frame.shape[1] // 2  # Środek obrazu w osi X
-
-            detected = False
-            for result in results[0].boxes:
-                cls = result.cls
-                confidence = result.conf.item()
-                x1, y1, x2, y2 = map(int, result.xyxy[0])  # Współrzędne prostokąta
-                human_center = (x1 + x2) // 2  # Środek sylwetki w osi X
-
-                if cls == 0 and confidence > 0.75:  # Detekcja człowieka
-                    detected = True
-                    self.offset = human_center - frame_center
-                    self.scale_offset(frame.shape[0])
-                    print("\nOffset: " + str(self.offset) + "\n")
-                    break
-
-            if not detected:
-                self.offset = 0
-                self.direction = "Brak sylwetki"
+                break
+            
+            frame = self.detect_human(frame)
+           
+            #cv2.imshow("Human Detection with YOLO", frame)
+            
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
         
-            #window for testing
-            cv2.imshow("Human Detection with YOLO", frame)
-
-            time.sleep(0.01)  # Zapobiega przeciążeniu CPU
-
-
-    def start(self):
-        """Rozpoczyna śledzenie w nowym wątku."""
-        if not self.running:
-            self.running = True
-            self.thread = threading.Thread(target=self._process_frame)
-            self.thread.start()
-
-    def stop(self):
-        """Zatrzymuje wątek śledzenia."""
-        if self.running:
-            self.running = False
-            if self.thread is not None:
-                self.thread.join()
-
-    def scale_offset(self, frame_width):
-    
-        self.offset = ((self.offset / frame_width) * self.max_offset)
-
-    def get_offset(self):
-        """Zwraca przesunięcie sylwetki względem środka obrazu."""
-        return self.offset
-
-
-    def __del__(self):
-        """Czyszczenie zasobów."""
         self.cap.release()
         cv2.destroyAllWindows()
 
-
-
-# Testowanie klasy
+# Example usage
 if __name__ == "__main__":
-    tracker = HumanTracker()
-    tracker.start()
-
-    try:
-        while True:
-            offset = tracker.get_offset()
-            #direction = tracker.direction()
-            print(f"Offset: {offset}")
-            time.sleep(1)
-    except KeyboardInterrupt:
-        tracker.stop()
+    detector = HumanTracker()
+    detector.start_detection()

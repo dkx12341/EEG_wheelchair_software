@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import Listbox, Scrollbar, Label
 from PIL import Image, ImageTk
 import cv2
+import time
 
 from main import Main
 
@@ -22,8 +23,13 @@ class GraphicalUserInterface:
         self.root.title("Electric Wheelchair Controller")
         self.root.geometry("800x600")
 
-        self.face_analyzer = controller.face_analyzer
+        #self.face_analyzer = controller.face_analyzer
         self.set_head_window = None
+        self.set_follow_window = None
+        self.controller = controller
+        self.curr_video_src = None
+        self.curr_window_video_player = None
+
 
         # Frame for listbox and scrollbar
         frame = tk.Frame(self.root)
@@ -32,7 +38,8 @@ class GraphicalUserInterface:
         # Scrollbar
         scrollbar = Scrollbar(frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.controller = controller
+     
+
         # Listbox to display logs
         self.log_list = Listbox(frame, width=60, height=20, yscrollcommand=scrollbar.set)
         self.log_list.pack()
@@ -46,6 +53,9 @@ class GraphicalUserInterface:
 
         EEG_steering_btn =tk.Button(self.root, text=f"EEG steering", command=lambda: (self.add_log(f"eeg steering active",self.log_list), self.start_EEG_steering()),width=15, height=4)
         EEG_steering_btn.grid(row=3, column=1, padx=5, pady=5)
+
+        follow_btn =tk.Button(self.root, text=f"Following silhouette", command=lambda: (self.add_log(f"following silhouette active",self.log_list), self.start_following()),width=15, height=4)
+        follow_btn.grid(row=1, column=2, padx=5, pady=5)
         
         
     def open_button_steering_window(self):
@@ -124,16 +134,19 @@ class GraphicalUserInterface:
         self.video_label.grid(row=0, column=8, padx=10, pady=10)
 
         # Start updating the video
-        self.update_video_frame()
+        #self.curr_window_video_player = self.set_head_window
+        #self.curr_video_src = self.controller.face_analyzer.video 
+
+        self.update_head_frame()
 
 
     def open_silhouette_following_window(self):
-        self.set_head_window = tk.Toplevel(self.root)
-        self.set_head_window.title("Head Steering")
-        self.set_head_window.geometry("1000x800")
+        self.set_follow_window = tk.Toplevel(self.root)
+        self.set_follow_window.title("Following")
+        self.set_follow_window.geometry("1000x800")
 
         # Frame for listbox and scrollbar
-        frame_sec = tk.Frame(self.set_head_window)
+        frame_sec = tk.Frame(self.set_follow_window)
         frame_sec.grid(row=0, column=1, columnspan=5, padx=10, pady=10)
 
         # Scrollbar
@@ -141,43 +154,41 @@ class GraphicalUserInterface:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         # Listbox to display logs
-        self.log_head_list = Listbox(frame_sec, width=50, height=10, yscrollcommand=scrollbar.set)
-        self.log_head_list.pack()
-        scrollbar.config(command=self.log_head_list.yview)
+        self.log_follow_list = Listbox(frame_sec, width=50, height=10, yscrollcommand=scrollbar.set)
+        self.log_follow_list.pack()
+        scrollbar.config(command=self.log_follow_list.yview)
 
         # Buttons
-        speed_up_btn = tk.Button(self.set_head_window, text="Speed:+20",
+        speed_up_btn = tk.Button(self.set_follow_window, text="Speed:+20",
                                  command=lambda: (self.controller.change_speed(20),
-                                                  self.add_log(f"Speed: {self.controller.speed}", self.log_head_list)),
+                                                  self.add_log(f"Speed: {self.controller.speed}", self.log_follow_list)),
                                  width=15, height=4)
         speed_up_btn.grid(row=1, column=3, padx=5, pady=5)
 
-        speed_dwn_btn = tk.Button(self.set_head_window, text="Speed:-20",
+        speed_dwn_btn = tk.Button(self.set_follow_window, text="Speed:-20",
                                   command=lambda: (self.controller.change_speed(-20),
-                                                   self.add_log(f"Speed: {self.controller.speed}", self.log_head_list)),
+                                                   self.add_log(f"Speed: {self.controller.speed}", self.log_follow_list)),
                                   width=15, height=4)
         speed_dwn_btn.grid(row=3, column=3, padx=5, pady=5)
 
-        exit_btn = tk.Button(self.set_head_window, text="Exit",
-                             command=lambda: (self.controller.stop_thread(), self.set_head_window.destroy()),
+        exit_btn = tk.Button(self.set_follow_window, text="Exit",
+                             command=lambda: (self.controller.stop_thread(), self.set_follow_window.destroy()),
                              width=15, height=4)
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
 
         # Video Frame Label
-        self.video_label = tk.Label(self.set_head_window)
+        self.video_label = tk.Label(self.set_follow_window)
         self.video_label.grid(row=0, column=8, padx=10, pady=10)
-
         # Start updating the video
-        self.update_video_frame()
+        self.update_follow_frame()
 
 
+   
 
-
-
-
-    def update_video_frame(self):
-            if self.face_analyzer.video is not None:
-                frame = self.face_analyzer.video  # Get the frame from the controller
+    def update_head_frame(self):
+            if self.controller.face_analyzer.video is not None:
+           #if video is not None:
+                frame = self.controller.face_analyzer.video  # Get the frame from the controller
 
                 # Convert frame from BGR to RGB
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -189,11 +200,24 @@ class GraphicalUserInterface:
                 self.video_label.config(image=imgtk)
 
             # Schedule the next frame update
-            self.set_head_window.after(10, self.update_video_frame)
+            self.set_head_window.after(10, self.update_head_frame)
 
+    def update_follow_frame(self):
+            if self.controller.human_tracker.video is not None:
+            #if video is not None:
+                frame = self.controller.human_tracker.video  # Get the frame from the controller
 
+                # Convert frame from BGR to RGB
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(frame)
+                imgtk = ImageTk.PhotoImage(image=img)
 
+                # Update label with the new image
+                self.video_label.imgtk = imgtk
+                self.video_label.config(image=imgtk)
 
+            # Schedule the next frame update
+            self.set_follow_window.after(10, self.update_follow_frame)
 
     def start_button_steering(self):
         
@@ -201,11 +225,22 @@ class GraphicalUserInterface:
         self.open_button_steering_window() 
 
     def start_head_steering(self):
+        self.open_head_steering_window()
+        time.sleep(1.5)
         self.controller.start_new_thread(self.controller.head_steering)
-        self.open_head_steering_window() 
+      
 
     def start_EEG_steering(self):
         self.controller.start_new_thread(self.controller.EEG_steering)
+
+    def start_following(self):
+
+        self.open_silhouette_following_window()
+        self.controller.start_new_thread(self.controller.following)
+        
+        
+        
+        
 
 
 
