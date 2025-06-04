@@ -1,9 +1,9 @@
-import cortex
-from cortex import Cortex
+import cortex2
+from cortex2 import EmotivCortex2Client
 
 class Train():
     """
-    A class to use BCI API to control the training of the Facial Expressions detections.
+    A class to use BCI API to control the training of the mental command detections.
 
     Attributes
     ----------
@@ -21,8 +21,8 @@ class Train():
         To unload an profile
     load_profile(profile_name):
         To load an  profile for training
-    train_fe_action(status):
-        To control training of facialExpression action
+    train_mc_action(status):
+        To control training of mentalCommand action
 
     Callbacks functions
     -------------------
@@ -41,7 +41,7 @@ class Train():
     """
 
     def __init__(self, app_client_id, app_client_secret, **kwargs):
-        self.c = Cortex(app_client_id, app_client_secret, debug_mode=True, **kwargs)
+        self.c = EmotivCortex2Client(app_client_id, app_client_secret, debug_mode=True, **kwargs)
         self.c.bind(create_session_done=self.on_create_session_done)
         self.c.bind(query_profile_done=self.on_query_profile_done)
         self.c.bind(load_unload_profile_done=self.on_load_unload_profile_done)
@@ -55,7 +55,7 @@ class Train():
         To start training process as below workflow
         (1) check access right -> authorize -> connect headset->create session
         (2) query profile -> get current profile -> load/create profile -> subscribe sys
-        (3) start and accept FE action training in the action list one by one
+        (3) start and accept MC action training in the action list one by one
         Parameters
         ----------
         profile_name : string, required
@@ -70,7 +70,7 @@ class Train():
         None
         """
         if profile_name == '':
-            raise ValueError(' Empty profile_name. The profile_name cannot be empty.')
+            raise ValueError('Empty profile_name. The profile_name cannot be empty.')
 
         self.profile_name = profile_name
         self.actions = actions
@@ -86,9 +86,9 @@ class Train():
     def subscribe_data(self, streams):
         """
         To subscribe to one or more data streams
-        'com': Mental Command
-        'fac' : Facial Expression
-        'sys': Training Event
+        'com': Mental command
+        'fac' : Facial expression
+        'sys': training event
 
         Parameters
         ----------
@@ -147,10 +147,19 @@ class Train():
         None
         """
         self.c.setup_profile(profile_name, 'save')
-    
-    def train_fe_action(self, status):
+
+    def get_active_action(self, profile_name):
+        self.c.get_mental_command_active_action(profile_name)
+
+    def get_command_brain_map(self, profile_name):
+        self.c.get_mental_command_brain_map(profile_name)
+
+    def get_training_threshold(self,profile_name):
+        self.c.get_mental_command_training_threshold(profile_name)
+
+    def train_mc_action(self, status):
         """
-        To control the training of the Facial Expression action.
+        To control the training of the mental command action.
         Make sure the headset is at good contact quality. You need to focus during 8 seconds for training an action.
         For simplicity, the example will train action by action in the actions list
 
@@ -164,12 +173,13 @@ class Train():
         """
         if self.action_idx < len(self.actions):
             action = self.actions[self.action_idx]
-            print('train_fe_action: -----------------------------------: '+ action + ":" + status)
-            self.c.train_request(detection='facialExpression',
+            print('train_mc_action: -----------------------------------: '+ action + ":" + status)
+            self.c.train_request(detection='mentalCommand',
                                  action=action,
                                  status=status)
         else:
             # save profile after training
+            print('train_mc_action: -----------------------------------: Done') 
             self.c.setup_profile(self.profile_name, 'save')
             self.action_idx = 0 # reset action_idx
 
@@ -201,7 +211,8 @@ class Train():
             self.c.close()
 
     def on_save_profile_done (self, *args, **kwargs):
-        print('Save profile ' + self.profile_name + " successfully")
+        print('Save profile ' + self.profile_name + " successfully.")
+        # You can test some advanced bci such as active actions, brain map, and training threshold. before unload profile
         self.unload_profile(self.profile_name)
 
     def on_new_sys_data (self, *args, **kwargs):
@@ -209,15 +220,15 @@ class Train():
         train_event = data[1]
         action = self.actions[self.action_idx]
         print('on_new_sys_data: ' + action +" : " + train_event)
-        if train_event == 'FE_Succeeded':
+        if train_event == 'MC_Succeeded':
             # train action successful. you can accept the training to complete or reject the training
-            self.train_fe_action('accept')
-        elif train_event == 'FE_Failed':
-            self.train_fe_action("reject")
-        elif train_event == 'FE_Completed' or train_event == 'FE_Rejected':
+            self.train_mc_action('accept')
+        elif train_event == 'MC_Failed':
+            self.train_mc_action("reject")
+        elif train_event == 'MC_Completed' or train_event == 'MC_Rejected':
             # training complete. Move to next action
             self.action_idx = self.action_idx + 1
-            self.train_fe_action('start')
+            self.train_mc_action('start')
 
     def on_new_data_labels(self, *args, **kwargs):
         data = kwargs.get('data')
@@ -227,7 +238,7 @@ class Train():
             # subscribe sys event successfully
             # start training
             print('on_new_data_labels: start training ')
-            self.train_fe_action('start')
+            self.train_mc_action('start')
 
     def on_inform_error(self, *args, **kwargs):
         error_data = kwargs.get('error_data')
@@ -236,7 +247,7 @@ class Train():
 
         print(error_data)
 
-        if error_code == cortex.ERR_PROFILE_ACCESS_DENIED:
+        if error_code == cortex2.ERR_PROFILE_ACCESS_DENIED:
             # disconnect headset for next use
             print('Get error ' + error_message + ". Disconnect headset to fix this issue for next use.")
             self.c.disconnect_headset()
@@ -252,32 +263,25 @@ class Train():
 #   - The functions on_new_data_labels(), on_new_sys_data() will help to control  action by action training.
 #          You can modify these functions to control the training such as: reject an training, use advanced bci api.
 # RESULT
-#   - train facial expression action
+#   - train mental command action
 # 
 # -----------------------------------------------------------
 
 def main():
 
     # Please fill your application clientId and clientSecret before running script
-    your_app_client_id = ''
-    your_app_client_secret = ''
+    your_app_client_id = 'VJaLC8YrGf5fc023EYCRIdetb1TB8XX1gcPom6VH'
+    your_app_client_secret = '2DMTlNXw2DvH19zkybmMB8ZWoU2X4QHMIuUE1maWdK8KXTStQBu0trKvDUyJgEehW1UV9fHE1UasrMlMr1EXkXr74EcmV4x5nIOjvUVhohY7RN6cQuSLnLPYzMSgfLSp'
 
     # Init Train
     t=Train(your_app_client_id, your_app_client_secret)
 
-    # name of training profile
-    profile_name = '' # set your profile name. If the profile is not exited it will be created.
+    profile_name = 'dkx12341' # set your profile name. If the profile is not exited it will be created.
+
     # list actions which you want to train
-    actions = ['neutral', 'surprise', 'smile']
+    actions = ['neutral', 'push', 'pull']
     t.start(profile_name, actions)
 
 if __name__ =='__main__':
     main()
-
 # -----------------------------------------------------------
-
-
-
-
-
-

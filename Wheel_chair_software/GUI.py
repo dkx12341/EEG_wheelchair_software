@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import Listbox, Scrollbar, Label
 from PIL import Image, ImageTk
+
 import cv2
 import time
 
@@ -130,8 +131,8 @@ class GraphicalUserInterface:
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
 
         # Video Frame Label
-        self.video_label = tk.Label(self.set_head_window)
-        self.video_label.grid(row=0, column=8, padx=10, pady=10)
+        self.head_video_label = tk.Label(self.set_head_window)
+        self.head_video_label.grid(row=0, column=8, padx=10, pady=10)
 
         # Start updating the video
         #self.curr_window_video_player = self.set_head_window
@@ -172,13 +173,13 @@ class GraphicalUserInterface:
         speed_dwn_btn.grid(row=3, column=3, padx=5, pady=5)
 
         exit_btn = tk.Button(self.set_follow_window, text="Exit",
-                             command=lambda: (self.controller.stop_thread(), self.set_follow_window.destroy()),
+                             command=lambda: (self.controller.stop_thread(), self.sset_follow_window.destroy()),
                              width=15, height=4)
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
 
         # Video Frame Label
-        self.video_label = tk.Label(self.set_follow_window)
-        self.video_label.grid(row=0, column=8, padx=10, pady=10)
+        self.follow_video_label = tk.Label(self.set_follow_window)
+        self.follow_video_label.grid(row=0, column=8, padx=10, pady=10)
         # Start updating the video
         self.update_follow_frame()
 
@@ -196,8 +197,8 @@ class GraphicalUserInterface:
                 imgtk = ImageTk.PhotoImage(image=img)
 
                 # Update label with the new image
-                self.video_label.imgtk = imgtk
-                self.video_label.config(image=imgtk)
+                self.head_video_label.imgtk = imgtk
+                self.head_video_label.config(image=imgtk)
 
             # Schedule the next frame update
             self.set_head_window.after(10, self.update_head_frame)
@@ -213,8 +214,8 @@ class GraphicalUserInterface:
                 imgtk = ImageTk.PhotoImage(image=img)
 
                 # Update label with the new image
-                self.video_label.imgtk = imgtk
-                self.video_label.config(image=imgtk)
+                self.follow_video_label.imgtk = imgtk
+                self.follow_video_label.config(image=imgtk)
 
             # Schedule the next frame update
             self.set_follow_window.after(10, self.update_follow_frame)
