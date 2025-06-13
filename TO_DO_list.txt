@@ -18,7 +18,7 @@ Sterowanie głową:
 
 Sterowanie głosem:
 
-- implementacja (Jak?)
+- implementacja
 - naprawa na windows
 - 
 

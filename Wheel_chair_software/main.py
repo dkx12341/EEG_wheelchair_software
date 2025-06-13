@@ -189,7 +189,7 @@ class Main:
 
     def head_steering(self):
         self.face_analyzer.start()
-
+        time.sleep(1.5)
         self.head_calibration()
 
         print("head steering active")

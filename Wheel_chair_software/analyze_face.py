@@ -57,6 +57,11 @@ class FaceAnalyzer:
     def start(self):
         """Starts the camera processing in a new thread."""
         if not self.running:
+            # Reinitialize cameras
+            for i, cam in enumerate(self.cameras):
+                if not cam or not cam.isOpened():
+                    self.cameras[i] = cv2.VideoCapture(i)
+
             self.running = True
             self.thread = threading.Thread(target=self._run)
             self.thread.start()
