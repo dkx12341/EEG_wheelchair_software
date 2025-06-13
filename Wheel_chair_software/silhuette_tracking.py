@@ -45,7 +45,7 @@ class HumanTracker:
                 break
             
             frame = self.detect_human(frame)
-           
+            self.video = frame
             #cv2.imshow("Human Detection with YOLO", frame)
             
             if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -13,7 +13,7 @@ class GraphicalUserInterface:
     
     def __init__(self, root, controller:Main):
 
-        self.head_after_id = None
+
         self.set_head_window = None
         self.set_follow_window = None
         self.controller = controller
@@ -67,7 +67,7 @@ class GraphicalUserInterface:
         self.set_speed_window = tk.Toplevel(self.root)
         self.set_speed_window.title("Button Steering")
         self.set_speed_window.geometry("800x600")
-        
+        self.set_speed_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_speed_window))
 
 
         ###################################################################################
@@ -103,11 +103,13 @@ class GraphicalUserInterface:
         #exit_btn.pack()
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
     
+
+
     def open_head_steering_window(self):
         self.set_head_window = tk.Toplevel(self.root)
         self.set_head_window.title("Head Steering")
         self.set_head_window.geometry("1000x800")
-        self.set_head_window.protocol("WM_DELETE_WINDOW", self.close_head_window)
+        self.set_head_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_head_window))
 
 
 
@@ -142,7 +144,7 @@ class GraphicalUserInterface:
         speed_dwn_btn.grid(row=3, column=3, padx=5, pady=5)
 
         exit_btn = tk.Button(self.set_head_window, text="Exit",
-                             command=lambda: self.close_head_window(),
+                             command=lambda: self.close_window(self.set_head_window),
                              width=15, height=4)
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
 
@@ -154,43 +156,42 @@ class GraphicalUserInterface:
         #self.curr_window_video_player = self.set_head_window
         #self.curr_video_src = self.controller.face_analyzer.video 
 
-        if self.head_after_id:
-            self.set_head_window.after_cancel(self.head_after_id)
-            self.head_after_id = None
+ 
 
 
-        self.update_head_frame()
+        self.update_video_frame(self.controller.face_analyzer, self.set_head_window, self.head_video_label)
 
     ###################################################################################
     #                       Tools                                                     #
     ###################################################################################
 
-    def update_head_frame(self):
-            if self.controller.face_analyzer.video is not None:
-           #if video is not None:
-                frame = self.controller.face_analyzer.video  # Get the frame from the controller
-                
+    def update_video_frame(self, video_frame_src, video_window, video_label):
+        if video_window is None or not video_window.winfo_exists():
+            return  # Window has been closed
+        
+        if video_frame_src.video is not None:
+            try:
                 # Convert frame from BGR to RGB
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame = cv2.cvtColor(video_frame_src.video, cv2.COLOR_BGR2RGB)
                 img = Image.fromarray(frame)
                 imgtk = ImageTk.PhotoImage(image=img)
-
-                if self.set_head_window and self.set_head_window.winfo_exists():
+                
                 # Update label with the new image
-                    self.head_video_label.configure(image=imgtk)
-                    self.head_video_label.image = imgtk  
+                video_label.configure(image=imgtk)
+                video_label.image = imgtk  # Keep a reference
+                
+            except Exception as e:
+                print(f"Error updating video frame: {e}")
+        
+        # Schedule the next frame update if window still exists
+        if video_window.winfo_exists():
+            video_window.after(10, lambda: self.update_video_frame(video_frame_src, video_window, video_label))
 
+    def close_window(self,window):
+        
 
-            # Schedule the next frame update
-            self.head_after_id = self.set_head_window.after(10, self.update_head_frame)
-            #self.set_head_window.after(10, self.update_head_frame)
-
-    def close_head_window(self):
-        if self.head_after_id:
-            self.set_head_window.after_cancel(self.head_after_id)
-            self.head_after_id = None
         self.controller.stop_thread()
-        self.set_head_window.destroy()
+        window.destroy()
 
 
     def add_log(self, message, list):
@@ -203,9 +204,9 @@ class GraphicalUserInterface:
         self.open_button_steering_window() 
 
     def start_head_steering(self):
-        self.open_head_steering_window()
         
         self.controller.start_new_thread(self.controller.head_steering)
+        self.open_head_steering_window()
       
     def start_EEG_steering(self):
         self.controller.start_new_thread(self.controller.EEG_steering)
