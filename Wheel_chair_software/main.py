@@ -94,7 +94,7 @@ class Main:
         self.speed = 0
         self.turn = 0
         self.wheelchair.set_speed(self.speed)
-        self.wheelchair.set_steer(self.turn)
+        self.wheelchair.set_turn(self.turn)
 
     
         if self.active_thread and self.active_thread.is_alive():
@@ -112,7 +112,7 @@ class Main:
         self.speed = 0
         self.turn = 0
         self.wheelchair.set_speed(self.speed)
-        self.wheelchair.set_steer(self.turn)
+        self.wheelchair.set_turn(self.turn)
 
         if self.active_thread and self.active_thread.is_alive():
                 self.stop_thread_event.set()
@@ -204,10 +204,11 @@ class Main:
                 continue
 
 
-            ster_value = max(min(int(normalized_gaze[0]), self.MAX_TURN), self.MIN_TURN)
-            print(f"Steering: {ster_value}")  # Debugging wartości sterowania
+            turn_value = max(min(int(normalized_gaze[0]), self.MAX_TURN), self.MIN_TURN)
+            print(f"Steering: {turn_value}")  # Debugging wartości sterowania
 
-            self.wheelchair.set_steer(ster_value)
+            self.wheelchair.set_turn(turn_value)
+            self.turn = turn_value
             self.wheelchair.set_speed(self.speed) 
 
             time.sleep(0.05)
@@ -224,7 +225,7 @@ class Main:
         while not self.stop_thread_event.is_set():
             
             self.wheelchair.set_speed(EEG_obj.get_stright_output())
-            self.wheelchair.set_steer(EEG_obj.get_turn_output())
+            self.wheelchair.set_turn(EEG_obj.get_turn_output())
             
             #print(f"Predkosc: " + str(EEG_obj.get_stright_output()) + "\n Skret: " + str(EEG_obj.get_turn_output))   
 
@@ -239,7 +240,7 @@ class Main:
         while not self.stop_thread_event.is_set():
                 
                 self.wheelchair.set_speed(self.speed)
-                self.wheelchair.set_steer(self.turn)
+                self.wheelchair.set_turn(self.turn)
 
                 time.sleep(0.05)
         print("button steering finished")
@@ -252,7 +253,7 @@ class Main:
 
         while not self.stop_thread_event.is_set():
             
-            self.wheelchair.set_steer(self.human_tracker.get_offset())
+            self.wheelchair.set_turn(self.human_tracker.get_offset())
             self.wheelchair.set_speed(self.speed)
           
             time.sleep(0.05)

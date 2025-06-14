@@ -18,7 +18,9 @@ class GraphicalUserInterface:
         self.set_follow_window = None
         self.controller = controller
         self.curr_video_src = None
-        self.curr_window_video_player = None
+
+        self.speed_label = None
+        self.turn_label = None
 
         self.open_menu_window(root, controller)
         
@@ -34,9 +36,6 @@ class GraphicalUserInterface:
         #self.face_analyzer = controller.face_analyzer
        
 
-        ###################################################################################
-        #                       screen layout                                             #
- 
         # Frame for listbox and scrollbar
         frame = tk.Frame(self.root)
         frame.grid(row=0, column=1, columnspan=10, padx=10, pady=10)
@@ -69,37 +68,25 @@ class GraphicalUserInterface:
         self.set_speed_window.geometry("800x600")
         self.set_speed_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_speed_window))
 
-
-        ###################################################################################
-        #                       screen layout                                             #
-
-
-        # Frame for listbox and scrollbar
-        frame_sec = tk.Frame(self.set_speed_window)
-        frame_sec.grid(row=0, column=1, columnspan=10, padx=10, pady=10)
-
         
-        # Scrollbar
-        scrollbar = Scrollbar(frame_sec)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.speed_label = tk.Label(self.set_speed_window, text=f"Speed value: {self.controller.speed}", font=("Arial", 10))
+        self.speed_label.grid(row=1, column=1, padx=5, pady=5)
 
-        # Listbox to display logs
-        self.log_button_list = Listbox(frame_sec, width=50, height=10, yscrollcommand=scrollbar.set)
-        self.log_button_list.pack()
-        scrollbar.config(command=self.log_button_list.yview)
+        self.turn_label = tk.Label(self.set_speed_window, text=f"Turn value: {self.controller.turn}", font=("Arial", 10))
+        self.turn_label.grid(row=2, column=1, padx=5, pady=5)
         
         # buttons
-        speed_up_btn = tk.Button(self.set_speed_window, text=f"Speed:+20", command=lambda: (self.controller.change_speed(20) ,self.add_log(f"Speed: " + str(main.speed),self.log_button_list)),width=15, height=4)
+        speed_up_btn = self.speed_button(20,self.set_speed_window)
         speed_up_btn.grid(row=1, column=3, padx=5, pady=5)
-        speed_dwn_btn = tk.Button(self.set_speed_window, text=f"Speed:-20", command=lambda:(self.controller.change_speed(-20) ,self.add_log(f"Speed: " + str(main.speed),self.log_button_list)),width=15, height=4)
+        speed_dwn_btn = self.speed_button(20,self.set_speed_window)
         speed_dwn_btn.grid(row=3, column=3, padx=5, pady=5)
-        turn_rt_btn = tk.Button(self.set_speed_window, text=f"Right: 5", command=lambda: (self.controller.change_turn(5) ,self.add_log(f"Right:" + str(main.turn),self.log_button_list)),width=15, height=4)
+        turn_rt_btn = self.turn_button(5,self.set_speed_window)
         turn_rt_btn.grid(row=2, column=4, padx=5, pady=5)
-        turn_lt_btn = tk.Button(self.set_speed_window, text=f"Left: 5", command=lambda: (self.controller.change_turn(-5) ,self.add_log(f"Left:" + str(main.turn),self.log_button_list)) ,width=15, height=4)
+        turn_lt_btn =self.turn_button(5,self.set_speed_window)
         turn_lt_btn.grid(row=2, column=2, padx=5, pady=5)
         
         
-        exit_btn = tk.Button(self.set_speed_window, text="Exit", command= lambda:(self.controller.stop_thread(), self.set_speed_window.destroy()),width=15, height=4)
+        exit_btn = tk.Button(self.set_speed_window, text="Exit", command= lambda:(self.close_window(self.set_speed_window)),width=15, height=4)
         #exit_btn.pack()
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
     
@@ -112,54 +99,34 @@ class GraphicalUserInterface:
         self.set_head_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_head_window))
 
 
+        self.speed_label = tk.Label(self.set_head_window, text=f"Speed value: {self.controller.speed}", font=("Arial", 10))
+        self.speed_label.grid(row=1, column=1, padx=5, pady=5)
 
+        self.turn_label = tk.Label(self.set_head_window, text=f"Turn value: {self.controller.turn}", font=("Arial", 10))
+        self.turn_label.grid(row=2, column=1, padx=5, pady=5)
 
-        ###################################################################################
-        #                       screen layout                                             #
- 
-        # Frame for listbox and scrollbar
-        frame_sec = tk.Frame(self.set_head_window)
-        frame_sec.grid(row=0, column=1, columnspan=5, padx=10, pady=10)
-
-        # Scrollbar
-        scrollbar = Scrollbar(frame_sec)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-        # Listbox to display logs
-        self.log_head_list = Listbox(frame_sec, width=50, height=10, yscrollcommand=scrollbar.set)
-        self.log_head_list.pack()
-        scrollbar.config(command=self.log_head_list.yview)
+        # Video Frame Label
+        self.head_video_label = tk.Label(self.set_head_window)
+        self.head_video_label.grid(row=0, column=8,rowspan=5, padx=10, pady=10)
 
         # Buttons
-        speed_up_btn = tk.Button(self.set_head_window, text="Speed:+20",
-                                 command=lambda: (self.controller.change_speed(20),
-                                                  self.add_log(f"Speed: {self.controller.speed}", self.log_head_list)),
-                                 width=15, height=4)
+        speed_up_btn = self.speed_button(20, self.set_head_window)
         speed_up_btn.grid(row=1, column=3, padx=5, pady=5)
 
-        speed_dwn_btn = tk.Button(self.set_head_window, text="Speed:-20",
-                                  command=lambda: (self.controller.change_speed(-20),
-                                                   self.add_log(f"Speed: {self.controller.speed}", self.log_head_list)),
-                                  width=15, height=4)
+        speed_dwn_btn = self.speed_button(-20, self.set_head_window)
         speed_dwn_btn.grid(row=3, column=3, padx=5, pady=5)
+
 
         exit_btn = tk.Button(self.set_head_window, text="Exit",
                              command=lambda: self.close_window(self.set_head_window),
                              width=15, height=4)
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
 
-        # Video Frame Label
-        self.head_video_label = tk.Label(self.set_head_window)
-        self.head_video_label.grid(row=0, column=8, padx=10, pady=10)
-
-        # Start updating the video
-        #self.curr_window_video_player = self.set_head_window
-        #self.curr_video_src = self.controller.face_analyzer.video 
-
- 
-
+        
 
         self.update_video_frame(self.controller.face_analyzer, self.set_head_window, self.head_video_label)
+
+
 
     ###################################################################################
     #                       Tools                                                     #
@@ -183,20 +150,56 @@ class GraphicalUserInterface:
             except Exception as e:
                 print(f"Error updating video frame: {e}")
         
+        self.update_steering_values()
+
         # Schedule the next frame update if window still exists
         if video_window.winfo_exists():
             video_window.after(10, lambda: self.update_video_frame(video_frame_src, video_window, video_label))
 
-    def close_window(self,window):
+
+    def update_steering_values(self):
+        self.speed_label.config(text = f"Speed value: {self.controller.speed}")
+        self.turn_label.config(text = f"Turn value: {self.controller.turn}")
         
+
+    def close_window(self,window):
+
+        #stop wheelchair when closing window
+        self.controller.change_speed(-self.controller.speed)
+        self.controller.change_turn(-self.controller.turn)
 
         self.controller.stop_thread()
         window.destroy()
 
-
     def add_log(self, message, list):
         list.insert(tk.END, message)
         list.yview(tk.END)  # Auto-scroll to the latest log
+
+    def speed_button(self, d_speed, parent_window):
+        button_txt = "Speed: "
+        if d_speed < 0:
+            button_txt += ("-" + str(d_speed))
+        else:
+            button_txt += ("+" + str(d_speed))
+
+
+        return tk.Button(parent_window, text=button_txt,
+                                 command=lambda: (self.controller.change_speed(d_speed), self.update_steering_values()),
+                                 width=15, height=4)
+
+
+    def turn_button(self, d_turn,parent_window):
+        button_txt = "Turn: "
+        if d_turn < 0:
+            button_txt += ("-" + str(d_turn))
+        else:
+            button_txt += ("+" + str(d_turn))
+
+
+        return tk.Button(parent_window, text=button_txt,
+                                 command=lambda: (self.controller.change_turn(d_turn), self.update_steering_values()),
+                                 width=15, height=4)
+
 
     def start_button_steering(self):
         

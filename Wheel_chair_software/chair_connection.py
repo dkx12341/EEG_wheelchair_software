@@ -247,7 +247,7 @@ class ChairConnect:
         """
         if self.running:
             self.set_speed(0)
-            self.set_steer(0)
+            self.set_turn(0)
             time.sleep(0.3)
             self.running = False
             self.thread.join()  # Czekamy aż wątek zakończy działanie
@@ -278,7 +278,7 @@ class ChairConnect:
         if -1000 <= speed <= 1000:
             self.speed = speed
 
-    def set_steer(self, steer):
+    def set_turn(self, steer):
         """
         Ustawia kierunek (skręt), który zostanie wysłany do urządzenia.
 
