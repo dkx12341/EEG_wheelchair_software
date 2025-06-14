@@ -17,7 +17,7 @@ class GraphicalUserInterface:
         self.set_head_window = None
         self.set_follow_window = None
         self.controller = controller
-        self.curr_video_src = None
+        
 
         self.speed_label = None
         self.turn_label = None
@@ -34,7 +34,7 @@ class GraphicalUserInterface:
     def open_menu_window(self, root, controller:Main):
         self.root = root
         self.root.title("Electric Wheelchair Controller")
-        self.root.geometry("800x600")
+        self.root.geometry("1200x1000")
 
         #self.face_analyzer = controller.face_analyzer
        
@@ -97,7 +97,7 @@ class GraphicalUserInterface:
     def open_head_steering_window(self):
         self.set_head_window = tk.Toplevel(self.root)
         self.set_head_window.title("Head Steering")
-        self.set_head_window.geometry("1000x800")
+        self.set_head_window.geometry("1200x1000")
         self.set_head_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_head_window))
         self.bind_steering_keys(self.set_head_window)
 
@@ -124,10 +124,41 @@ class GraphicalUserInterface:
                              width=15, height=4)
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
 
-        
-
         self.update_video_frame(self.controller.face_analyzer, self.set_head_window, self.head_video_label)
 
+    def open_follow_steering_window(self):
+        self.set_follow_window = tk.Toplevel(self.root)
+        self.set_follow_window.title("Silhouette following")
+        self.set_follow_window.geometry("1200x1000")
+        self.set_follow_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_follow_window))
+        self.bind_steering_keys(self.set_follow_window)
+
+        self.speed_label = tk.Label(self.set_follow_window, text=f"Speed value: {self.controller.speed}", font=("Arial", 10))
+        self.speed_label.grid(row=1, column=1, padx=5, pady=5)
+
+        self.turn_label = tk.Label(self.set_follow_window, text=f"Turn value: {self.controller.turn}", font=("Arial", 10))
+        self.turn_label.grid(row=2, column=1, padx=5, pady=5)
+
+        # Video Frame Label
+        self.follow_video_label = tk.Label(self.set_follow_window)
+        self.follow_video_label.grid(row=0, column=8,rowspan=5, padx=10, pady=10)
+
+        # Buttons
+        speed_up_btn = self.speed_button(self.speed_delta, self.set_follow_window)
+        speed_up_btn.grid(row=1, column=3, padx=5, pady=5)
+
+        speed_dwn_btn = self.speed_button(-self.speed_delta, self.set_follow_window)
+        speed_dwn_btn.grid(row=2, column=3, padx=5, pady=5)
+
+
+        exit_btn = tk.Button(self.set_follow_window, text="Exit",
+                             command=lambda: self.close_window(self.set_follow_window),
+                             width=15, height=4)
+        exit_btn.grid(row=4, column=3, padx=10, pady=10)
+
+        
+
+        self.update_video_frame(self.controller.human_tracker, self.set_follow_window, self.follow_video_label)
 
 
     ###################################################################################
@@ -229,7 +260,7 @@ class GraphicalUserInterface:
 
     def start_following(self):
 
-        self.open_silhouette_following_window()
+        self.open_follow_steering_window()
         self.controller.start_new_thread(self.controller.following)
         
         

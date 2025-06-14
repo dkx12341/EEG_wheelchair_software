@@ -86,7 +86,6 @@ class Main:
 
 
     #start_new_thread called every time new steering method is selected
-
     def start_new_thread(self, function, *args):
         """
         Starts new thread using given function, while stopping priveus thread
@@ -108,6 +107,8 @@ class Main:
         self.active_thread = threading.Thread(target=function, args=args)
         self.active_thread.start()
    
+
+    #call whenever you want to finish some steering method
     def stop_thread(self):
         self.speed = 0
         self.turn = 0
@@ -122,7 +123,7 @@ class Main:
 
 
 
-    #functions to operate inside of other methods
+    #tool functions to operate inside of other methods
 
     def Play_audio(self, audio_f_name):
         #print(name)
@@ -168,6 +169,8 @@ class Main:
         self.face_analyzer.calibrate_right()
         self.audio_player.play_audio("kalibracja", "zakończono") 
 
+
+    #methods that allow outside classes to change speed & turn values by given value
     def change_speed(self, value):
         self.speed = self.speed + value
         if(self.speed >= self.MAX_SPEED):
@@ -184,9 +187,7 @@ class Main:
 
 
 
-
-    #Steering method functions, call them as start_new_thread argument
-
+    #Steering methods, call them as start_new_thread argument
     def head_steering(self):
         self.face_analyzer.start()
         time.sleep(1.5)
@@ -253,16 +254,18 @@ class Main:
 
         while not self.stop_thread_event.is_set():
             
-            self.wheelchair.set_turn(self.human_tracker.get_offset())
+            self.wheelchair.set_turn(self.human_tracker.turn)
+            self.turn = self.human_tracker.turn
             self.wheelchair.set_speed(self.speed)
           
             time.sleep(0.05)
+
+        self.human_tracker.stop()
 
         print("EEG steering finished")
 
 
 
-                    
 
     def quit(self):
         self.recognizer_audio.stop()
