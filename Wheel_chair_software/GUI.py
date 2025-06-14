@@ -22,6 +22,9 @@ class GraphicalUserInterface:
         self.speed_label = None
         self.turn_label = None
 
+        self.speed_delta = 20
+        self.turn_delta = 5
+
         self.open_menu_window(root, controller)
         
     ###################################################################################
@@ -63,41 +66,40 @@ class GraphicalUserInterface:
         follow_btn.grid(row=1, column=2, padx=5, pady=5)     
         
     def open_button_steering_window(self):
-        self.set_speed_window = tk.Toplevel(self.root)
-        self.set_speed_window.title("Button Steering")
-        self.set_speed_window.geometry("800x600")
-        self.set_speed_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_speed_window))
-
+        self.set_button_steering_window = tk.Toplevel(self.root)
+        self.set_button_steering_window.title("Button Steering")
+        self.set_button_steering_window.geometry("800x600")
+        self.set_button_steering_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_button_steering_window))
+        self.bind_steering_keys(self.set_button_steering_window)
         
-        self.speed_label = tk.Label(self.set_speed_window, text=f"Speed value: {self.controller.speed}", font=("Arial", 10))
+        self.speed_label = tk.Label(self.set_button_steering_window, text=f"Speed value: {self.controller.speed}", font=("Arial", 10))
         self.speed_label.grid(row=1, column=1, padx=5, pady=5)
 
-        self.turn_label = tk.Label(self.set_speed_window, text=f"Turn value: {self.controller.turn}", font=("Arial", 10))
+        self.turn_label = tk.Label(self.set_button_steering_window, text=f"Turn value: {self.controller.turn}", font=("Arial", 10))
         self.turn_label.grid(row=2, column=1, padx=5, pady=5)
         
         # buttons
-        speed_up_btn = self.speed_button(20,self.set_speed_window)
+        speed_up_btn = self.speed_button(self.speed_delta,self.set_button_steering_window)
         speed_up_btn.grid(row=1, column=3, padx=5, pady=5)
-        speed_dwn_btn = self.speed_button(20,self.set_speed_window)
+        speed_dwn_btn = self.speed_button(-self.speed_delta,self.set_button_steering_window)
         speed_dwn_btn.grid(row=3, column=3, padx=5, pady=5)
-        turn_rt_btn = self.turn_button(5,self.set_speed_window)
+        turn_rt_btn = self.turn_button(self.turn_delta,self.set_button_steering_window)
         turn_rt_btn.grid(row=2, column=4, padx=5, pady=5)
-        turn_lt_btn =self.turn_button(5,self.set_speed_window)
+        turn_lt_btn =self.turn_button(-self.turn_delta,self.set_button_steering_window)
         turn_lt_btn.grid(row=2, column=2, padx=5, pady=5)
         
         
-        exit_btn = tk.Button(self.set_speed_window, text="Exit", command= lambda:(self.close_window(self.set_speed_window)),width=15, height=4)
+        exit_btn = tk.Button(self.set_button_steering_window, text="Exit", command= lambda:(self.close_window(self.set_button_steering_window)),width=15, height=4)
         #exit_btn.pack()
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
     
-
 
     def open_head_steering_window(self):
         self.set_head_window = tk.Toplevel(self.root)
         self.set_head_window.title("Head Steering")
         self.set_head_window.geometry("1000x800")
         self.set_head_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_head_window))
-
+        self.bind_steering_keys(self.set_head_window)
 
         self.speed_label = tk.Label(self.set_head_window, text=f"Speed value: {self.controller.speed}", font=("Arial", 10))
         self.speed_label.grid(row=1, column=1, padx=5, pady=5)
@@ -110,11 +112,11 @@ class GraphicalUserInterface:
         self.head_video_label.grid(row=0, column=8,rowspan=5, padx=10, pady=10)
 
         # Buttons
-        speed_up_btn = self.speed_button(20, self.set_head_window)
+        speed_up_btn = self.speed_button(self.speed_delta, self.set_head_window)
         speed_up_btn.grid(row=1, column=3, padx=5, pady=5)
 
-        speed_dwn_btn = self.speed_button(-20, self.set_head_window)
-        speed_dwn_btn.grid(row=3, column=3, padx=5, pady=5)
+        speed_dwn_btn = self.speed_button(-self.speed_delta, self.set_head_window)
+        speed_dwn_btn.grid(row=2, column=3, padx=5, pady=5)
 
 
         exit_btn = tk.Button(self.set_head_window, text="Exit",
@@ -161,7 +163,6 @@ class GraphicalUserInterface:
         self.speed_label.config(text = f"Speed value: {self.controller.speed}")
         self.turn_label.config(text = f"Turn value: {self.controller.turn}")
         
-
     def close_window(self,window):
 
         #stop wheelchair when closing window
@@ -199,6 +200,18 @@ class GraphicalUserInterface:
         return tk.Button(parent_window, text=button_txt,
                                  command=lambda: (self.controller.change_turn(d_turn), self.update_steering_values()),
                                  width=15, height=4)
+
+    def bind_steering_keys(self, window):
+        for key in ['w', 'W']:
+            window.bind(f"<{key}>", lambda event: self.controller.change_speed(self.speed_delta) or self.update_steering_values())
+        for key in ['s', 'S']:
+            window.bind(f"<{key}>", lambda event: self.controller.change_speed(-self.speed_delta) or self.update_steering_values())
+        for key in ['a', 'A']:
+            window.bind(f"<{key}>", lambda event: self.controller.change_turn(-self.turn_delta) or self.update_steering_values())
+        for key in ['d', 'D']:
+            window.bind(f"<{key}>", lambda event: self.controller.change_turn(self.turn_delta) or self.update_steering_values())
+
+
 
 
     def start_button_steering(self):
