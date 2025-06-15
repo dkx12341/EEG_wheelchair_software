@@ -53,7 +53,7 @@ class EEG_manager:
                 #print(f"Received from server: {data}")
                 if len(self.EEG_command_buffor) >= self.buffor_length:
                     self.adjust_output()
-                    #print ("straight output: " + str(self.straight_output) +"\n turn output: " + str(self.turn_output))
+                    print ("straight output: " + str(self.straight_output) +"\n turn output: " + str(self.turn_output))
 
                 
         except ConnectionRefusedError:

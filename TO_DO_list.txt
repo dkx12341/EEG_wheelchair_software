@@ -1,19 +1,19 @@
 Ogólne:
-- przenieść sterowanie prędkością do zmiennej Speed wewnątrz main
-- resetowanie prędkości po zakończeniu sterowania (prześlij wartość 0)
-- pozbycie się magicznych cyferek (max, min prędkości, zmiany prędkości)
+- przenieść sterowanie prędkością do zmiennej Speed wewnątrz main (DONE)
+- resetowanie prędkości po zakończeniu sterowania (prześlij wartość 0) (DONE)
+- pozbycie się magicznych cyferek (max, min prędkości, zmiany prędkości) (DONE)
+- zaimplementować sterowanie przyciskami z klawiatury (DONE
+- stworzyć plik z wykorzystanymi bibliotekami
+
 
 Podążanie za sylwetką:
-- Implementacja
-- dostosowanie szybkości do wielkości sylwetki
-- jak rozpoznać odległość bez widzenia całej sylwetki?
-
-
+- Implementacja (DONE)
+- obraz wewnątrz GUI(DONE)
 
 Sterowanie głową:
 
-- Możliwość sterowania prędkością z użyciem przycisków
-- obraz wewnątrz GUI
+- Możliwość sterowania prędkością z użyciem przycisków (DONE)
+- obraz wewnątrz GUI(DONE)
 
 
 Sterowanie głosem:
@@ -24,3 +24,9 @@ Sterowanie głosem:
 
 Sterowanie EEG:
 - odmowa sterowania na linux
+- implementacja w GUI
+
+
+Buggi:
+- zamrażanie wideo przy ponownym uruchomieniu (DONE)
+- blokowanie się wątków przy zmianie sposobu sterowania(DONE)

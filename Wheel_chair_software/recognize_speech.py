@@ -3,6 +3,12 @@ import time
 import speech_recognition as sr
 import webrtcvad
 
+
+#debug
+import cv2
+from analyze_face import FaceAnalyzer
+#
+
 VAD_LEVEL = 2#2   
 THRESHOLD = 0.1 #0.2
 LOOP_DELAY = 0.1#0.1
@@ -127,3 +133,19 @@ class RealTimeRecognizer:
             return transcription
         else:
             return ""
+
+
+# if __name__ == "__main__":
+#     detector = RealTimeRecognizer()
+#     analyzer = FaceAnalyzer(True,[cv2.VideoCapture(0)])
+#     while True:
+#             time.sleep(0.1)
+#             if True in analyzer.get_speaking_status():
+#                 detector.start_recording()
+#                 print(analyzer.get_speaking_status())
+#                 pass
+#             else:
+#                 print(detector.stop_recording())
+#                 pass
+    
+    

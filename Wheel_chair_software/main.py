@@ -10,8 +10,8 @@ import keyboard
 import pygame
 import platform
 
-from analyze_face import FaceAnalyzer  # Import klasy FaceAnalyzer
-from recognize_speech import RealTimeRecognizer  # Import klasy RealTimeRecognizer
+from analyze_face import FaceAnalyzer  
+from recognize_speech import RealTimeRecognizer  
 from recognize_face import Recognize_face
 #from hand import HandSteeringAnalyzer
 from speak import AudioPlayer
@@ -50,7 +50,6 @@ class Main:
         self.active_thread = None
         self.stop_thread_event = threading.Event()
 
-        self.check_system()
 
         self.port = "COM8"
         self.baud_rate = 115200
@@ -68,6 +67,9 @@ class Main:
         self.MIN_SPEED = -100
         self.MIN_TURN = -100
 
+        self.using_windows = False
+        
+        self.check_system()
         self.wheelchair_startup()          
 
     def check_system(self):
@@ -77,6 +79,7 @@ class Main:
             self.baud_rate = 115200
 
         elif(sys.platform == "win32"):
+            self.using_windows = True
             print("windows")
 
 

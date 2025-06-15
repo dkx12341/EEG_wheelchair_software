@@ -65,7 +65,7 @@ class GraphicalUserInterface:
         follow_btn =tk.Button(self.root, text=f"Following silhouette", command=lambda: (self.add_log(f"following silhouette active",self.log_list), self.start_following()),width=15, height=4)
         follow_btn.grid(row=1, column=2, padx=5, pady=5)     
         
-    def open_button_steering_window(self):
+    def open_button_steering_window(self):  
         self.set_button_steering_window = tk.Toplevel(self.root)
         self.set_button_steering_window.title("Button Steering")
         self.set_button_steering_window.geometry("800x600")
@@ -124,6 +124,7 @@ class GraphicalUserInterface:
                              width=15, height=4)
         exit_btn.grid(row=4, column=3, padx=10, pady=10)
 
+      
         self.update_video_frame(self.controller.face_analyzer, self.set_head_window, self.head_video_label)
 
     def open_follow_steering_window(self):
@@ -159,6 +160,34 @@ class GraphicalUserInterface:
         
 
         self.update_video_frame(self.controller.human_tracker, self.set_follow_window, self.follow_video_label)
+
+    def open_EEG_steering_window(self):
+        self.set_EEG_window = tk.Toplevel(self.root)
+        self.set_EEG_window.title("EEG steering")
+        self.set_EEG_window.geometry("600x500")
+        self.set_EEG_window.protocol("WM_DELETE_WINDOW", lambda: self.close_window(self.set_EEG_window))
+        self.bind_steering_keys(self.set_EEG_window)
+
+        self.speed_label = tk.Label(self.set_EEG_window, text=f"Speed value: {self.controller.speed}", font=("Arial", 10))
+        self.speed_label.grid(row=1, column=1, padx=5, pady=5)
+
+        self.turn_label = tk.Label(self.set_EEG_window, text=f"Turn value: {self.controller.turn}", font=("Arial", 10))
+        self.turn_label.grid(row=2, column=1, padx=5, pady=5)
+
+        
+
+        start_btn = tk.Button(self.set_EEG_window, text="Start_EEG",
+                             command=lambda: self.controller.start_new_thread(self.controller.EEG_steering),
+                             width=15, height=4)
+        start_btn.grid(row=0, column=3, padx=10, pady=10)
+
+        exit_btn = tk.Button(self.set_EEG_window, text="Exit",
+                             command=lambda: self.close_window(self.set_EEG_window),
+                             width=15, height=4)
+        exit_btn.grid(row=4, column=3, padx=10, pady=10)
+        
+        # while self.set_EEG_window.winfo_exists():
+        #     self.update_steering_values()
 
 
     ###################################################################################
@@ -256,7 +285,12 @@ class GraphicalUserInterface:
         self.open_head_steering_window()
       
     def start_EEG_steering(self):
-        self.controller.start_new_thread(self.controller.EEG_steering)
+        if self.controller.using_windows == True:
+            self.open_EEG_steering_window()
+           
+            
+        else:
+            self.add_log(f"EEG unavilable on linux",self.log_list)
 
     def start_following(self):
 
